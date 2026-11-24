@@ -174,6 +174,33 @@ button.tag{background:var(--glass);font:inherit;font-size:12px;font-weight:800}
 .mb .cta{width:100%;text-decoration:none;display:flex;align-items:center;justify-content:center}
 .mb .ghost{width:100%;margin-top:10px}
 .pclose{position:absolute;top:14px;right:14px;width:38px;min-height:38px;padding:0;border-radius:12px;font-size:20px;line-height:1}
+.wafab{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:40;display:flex;align-items:center;gap:10px;padding:12px 18px 12px 14px;border-radius:99px;background:#25d366;color:#06361a;font-weight:800;font-size:14.5px;text-decoration:none;box-shadow:0 10px 28px rgba(37,211,102,.45),0 2px 8px rgba(0,0,0,.25);transition:transform .15s}
+.wafab[hidden]{display:none}
+.wafab:hover{transform:translateY(-2px)}.wafab:active{transform:scale(.96)}
+.wafab svg{width:26px;height:26px;flex:none;fill:#06361a}
+.wafab::before{content:"";position:absolute;inset:0;border-radius:99px;border:2px solid #25d366;animation:wapulse 2.2s ease-out infinite;pointer-events:none}
+@keyframes wapulse{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.35,1.6);opacity:0}}
+@media(max-width:520px){.wafab{padding:12px;font-size:0}.wafab span{display:none}}
+@media(prefers-reduced-motion:reduce){.wafab::before{animation:none}}
+.spin{display:inline-block;width:16px;height:16px;border-radius:50%;border:2.5px solid currentColor;border-right-color:transparent;animation:spn .7s linear infinite;margin-right:9px;vertical-align:-3px}
+@keyframes spn{to{transform:rotate(360deg)}}
+.mb .hint{color:var(--mut);font-size:13.5px;margin:6px 0 16px}
+.stp{display:flex;gap:6px;margin:14px 0 18px}
+.stp span{flex:1;text-align:center;font-size:11.5px;font-weight:700;color:var(--mut);padding-top:8px;border-top:3px solid var(--line);transition:.25s}
+.stp span.on{color:var(--goldtxt);border-color:var(--gold)}
+.stp span.ok{color:var(--ink);border-color:#25d366}
+.okic{width:56px;height:56px;border-radius:50%;background:rgba(37,211,102,.16);display:grid;place-items:center;margin:4px auto 12px}
+.okic svg{width:28px;height:28px;stroke:#25d366;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.okic.er{background:rgba(255,120,100,.16)}.okic.er svg{stroke:var(--err)}
+.mb .ctr{text-align:center;font-size:14px;margin:0 0 16px;overflow-wrap:anywhere}
+.mb .ctr small{display:block;color:var(--mut);font-size:12.5px;margin-top:8px}
+.pbig{font-size:46px;font-weight:800;letter-spacing:-.04em;text-align:center;line-height:1.1;margin:10px 0 12px;min-height:51px}
+.pbar{height:12px;border-radius:99px;background:var(--line);overflow:hidden;margin-bottom:12px}
+.pbar i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--gold),var(--peach));transition:width .25s linear}
+.pbar.ind i{width:35%;animation:ind 1.1s ease-in-out infinite}
+@keyframes ind{0%{margin-left:-35%}100%{margin-left:100%}}
+.toast{position:fixed;left:50%;top:calc(16px + env(safe-area-inset-top,0px));transform:translate(-50%,-20px);opacity:0;z-index:80;max-width:min(92vw,420px);padding:12px 18px;border-radius:16px;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-left:4px solid #25d366;box-shadow:0 12px 34px rgba(0,0,0,.35);font-weight:700;font-size:14px;transition:.3s;pointer-events:none}
+.toast.on{transform:translate(-50%,0);opacity:1}.toast.er{border-left-color:var(--err)}
 </style></head><body>
 <div class="aura"></div>
 <div id="vLand"><div class="w">
@@ -204,6 +231,7 @@ button.tag{background:var(--glass);font:inherit;font-size:12px;font-weight:800}
 <div class="card"><div class="n">3</div><h3>Buat dan simpan</h3><p>Tekan Buat video, cek pratinjau, lalu simpan.</p></div></div></section>
 <section class="band"><h2>Siap bikin video pertamamu?</h2><p>Daftar trial gratis, tanpa kartu kredit.</p><a class="cta btn" href="#daftar" id="bandBtn">Coba gratis</a></section>
 <footer class="foot"><span>Ayat Reels</span><span>Kontak: <a id="fWa" href="#" target="_blank" rel="noopener">WhatsApp</a> | <a id="fMail" href="#">Email</a></span><span>Teks dari alquran.cloud, audio dari islamic.network.</span></footer>
+<a class="wafab" id="waFab" href="#" target="_blank" rel="noopener" aria-label="Order via WhatsApp" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21h.01c5.46 0 9.91-4.45 9.91-9.91A9.85 9.85 0 0 0 12.04 2Zm0 18.15h-.01a8.2 8.2 0 0 1-4.18-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.82 2.42a8.18 8.18 0 0 1 2.41 5.83c0 4.55-3.7 8.23-8.24 8.23Zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-2-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.15.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18-.06-.1-.23-.16-.48-.29Z"/></svg><span>Order via WhatsApp</span></a>
 </div></div>
 <div id="vLogin" hidden><button class="tgl ghost ltg" type="button" aria-label="Ganti tema gelap atau terang"><svg viewBox="0 0 24 24" aria-hidden="true"><g class="i-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></g><path class="i-moon" d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/></svg></button><div class="lw"><div class="lc">
 <div class="brand"><div class="logo"><svg viewBox="0 0 24 24" fill="#2a1405"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/></svg></div>Ayat Reels</div>
@@ -220,7 +248,7 @@ button.tag{background:var(--glass);font:inherit;font-size:12px;font-weight:800}
 <section class="panel"><h2>Buat kata sandi baru</h2><p class="hint">Masukkan kata sandi baru untuk akunmu.</p>
 <form id="rf" novalidate><div class="fld"><label for="np">Kata sandi baru</label><input id="np" type="password" autocomplete="new-password"></div>
 <div class="fld"><label for="np2">Ulangi kata sandi</label><input id="np2" type="password" autocomplete="new-password"></div>
-<button class="cta" id="rb" type="submit">Simpan kata sandi</button><p class="msg" id="rm" role="alert"></p></form></section></div></div></div>
+<button class="cta" id="rb" type="submit">Simpan kata sandi</button><p class="msg" id="rmm" role="alert"></p></form></section></div></div></div>
 <div id="vExp" hidden><div class="xw"><section class="panel"><h2 id="xt">Masa aktif berakhir</h2><p id="xp"></p><button class="cta" id="xc" type="button">Beli Pro</button><button class="ghost" id="xout" type="button">Keluar</button></section></div></div>
 <div id="vApp" hidden>
 <div class="w">
@@ -255,6 +283,30 @@ button.tag{background:var(--glass);font:inherit;font-size:12px;font-weight:800}
 <p class="note">Teks dari alquran.cloud, audio dari islamic.network. Video direkam real-time ke WebM, biarkan tab terbuka. Pakai Chrome di komputer atau Android.</p></aside>
 </div></div>
 </div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="ov" id="vForgot" hidden role="dialog" aria-modal="true" aria-labelledby="fgT"><div class="mb">
+<button class="ghost pclose" id="fgX" type="button" aria-label="Tutup">&times;</button>
+<span class="badge">Lupa kata sandi</span><h2 id="fgT">Reset kata sandi</h2>
+<div class="stp" id="fgSteps"><span class="on">1. Kirim tautan</span><span>2. Cek email</span><span>3. Sandi baru</span></div>
+<div id="fgForm"><p class="hint">Masukkan email akunmu. Kami kirim tautan untuk membuat kata sandi baru.</p>
+<div class="fld"><label for="fgEm">Email</label><input id="fgEm" type="email" autocomplete="username" inputmode="email"></div>
+<button class="cta" id="fgGo" type="button">Kirim tautan reset</button>
+<p class="msg" id="fgM" role="alert"></p></div>
+<div id="fgOk" hidden><div class="okic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+<p class="ctr"><b>Tautan sudah dikirim ke</b><br><span id="fgTo"></span><small>Buka email, klik tautannya, lalu kamu akan diarahkan ke sini untuk membuat kata sandi baru. Tidak ada? Cek folder spam.</small></p>
+<button class="cta" id="fgRe" type="button" disabled>Kirim ulang tautan</button>
+<button class="ghost" id="fgDone" type="button">Tutup</button>
+<p class="msg" id="fgM2" role="alert"></p></div>
+</div></div>
+<div class="ov" id="vSave" hidden role="dialog" aria-modal="true" aria-labelledby="svT"><div class="mb">
+<span class="badge" id="svB">Simpan video</span><h2 id="svT">Menyiapkan...</h2>
+<div class="stp" id="svSteps"><span class="on">1. Siapkan</span><span>2. Rekam</span><span>3. Simpan</span></div>
+<div class="pbig" id="svP"></div><div class="pbar ind" id="svBar"><i></i></div>
+<p class="ctr" id="svS"></p>
+<a class="cta" id="svDl" href="#" hidden>Unduh lagi</a>
+<button class="ghost" id="svCancel" type="button">Batalkan</button>
+<button class="ghost" id="svClose" type="button" hidden>Tutup</button>
+</div></div>
 <div class="ov" id="vPay" hidden role="dialog" aria-modal="true" aria-labelledby="pt"><div class="mb">
 <button class="ghost pclose" id="payX" type="button" aria-label="Tutup">&times;</button>
 <span class="badge">Paket Pro</span><h2 id="pt">Upgrade ke Pro</h2>
@@ -327,14 +379,30 @@ $("#prep").onclick=async()=>{await prep();if(ready)play(0)};
 $("#pp").onclick=async()=>{if(!ready){await prep();if(ready)play(0);return}if(playing){off=AC.currentTime-t0;stopP()}else play(off>=total-.1?0:off)};
 $("#sk").oninput=e=>{const t=+e.target.value;if(playing)play(t);else{off=t;if(M.on&&M.v)M.el.currentTime=t%(M.el.duration||1)}};
 function loop(){if($("#vApp").hidden){requestAnimationFrame(loop);return}let t=playing?AC.currentTime-t0:off;if(playing&&t>=total){stopP();off=0;t=total;if(onEnd){const f=onEnd;onEnd=null;f()}}
-if(playing)off=t;draw(t);$("#sk").value=t;$("#tm").textContent=fmt(t)+" / "+fmt(total);requestAnimationFrame(loop)}
+if(playing)off=t;if(expOn&&playing)expUpd(t);draw(t);$("#sk").value=t;$("#tm").textContent=fmt(t)+" / "+fmt(total);requestAnimationFrame(loop)}
 
 /* ---------- ekspor ---------- */
-$("#exp").onclick=async()=>{if(isTrial()&&exportsLeft()<=0){m("Limit hari ini habis ("+FREE_EXPORTS_PER_DAY+" video). Upgrade ke Pro untuk tanpa batas, atau coba lagi besok.",1);openPro();return}if(!window.MediaRecorder){m("Browser ini tidak bisa merekam video. Pakai Chrome di komputer atau Android.",1);return}if(!ready)await prep();if(!ready)return;ac();const st=cv.captureStream(30);dest.stream.getAudioTracks().forEach(t=>st.addTrack(t));
-const mt=["video/webm;codecs=vp9,opus","video/webm;codecs=vp8,opus","video/webm"].find(x=>MediaRecorder.isTypeSupported(x)),ch=[],r=new MediaRecorder(st,mt?{mimeType:mt,videoBitsPerSecond:5e6}:{videoBitsPerSecond:5e6});
+let expOn=false,expCancel=false,rec=null,svUrl="";
+const svE=$("#vSave");
+function svStage(st,title,sub){svE.hidden=false;const n={prep:0,rec:1,fin:2,done:3,err:-1}[st];document.querySelectorAll("#svSteps span").forEach((e,i)=>{e.classList.toggle("ok",i<n);e.classList.toggle("on",i===n)});
+$("#svT").textContent=title;$("#svS").textContent=sub||"";$("#svCancel").hidden=st!=="rec";$("#svClose").hidden=!(st==="done"||st==="err");$("#svDl").hidden=st!=="done"||!svUrl;$("#svB").textContent=st==="done"?"Selesai":st==="err"?"Gagal":"Simpan video";
+const bar=$("#svBar");bar.classList.toggle("ind",st==="prep"||st==="fin");if(st==="prep"||st==="fin")$("#svP").textContent="";if(st==="done"){$("#svP").textContent="100%";bar.firstElementChild.style.width="100%"}if(st==="rec"){bar.firstElementChild.style.width="0%";$("#svP").textContent="0%"}}
+function expUpd(t){const p=cl(t/total*100,0,99);$("#svBar").firstElementChild.style.width=p+"%";$("#svP").textContent=Math.floor(p)+"%";$("#svS").textContent="Sisa waktu perekaman "+fmt(Math.max(0,total-t))+". Biarkan tab tetap terbuka dan jangan pindah aplikasi."}
+$("#svClose").onclick=()=>{svE.hidden=true};
+$("#svCancel").onclick=()=>{expCancel=true;onEnd=null;stopP();off=0;if(rec&&rec.state!=="inactive")try{rec.stop()}catch(e){}};
+$("#exp").onclick=async()=>{if(expOn)return;if(isTrial()&&exportsLeft()<=0){m("Limit hari ini habis ("+FREE_EXPORTS_PER_DAY+" video). Upgrade ke Pro untuk tanpa batas, atau coba lagi besok.",1);openPro();return}if(!window.MediaRecorder){m("Browser ini tidak bisa merekam video. Pakai Chrome di komputer atau Android.",1);return}
+expOn=true;expCancel=false;svUrl="";
+if(!ready){svStage("prep","Menyiapkan audio...","Mengunduh audio dan teks ayat. Ini hanya sebentar.");await prep()}
+if(!ready){expOn=false;svStage("err","Belum bisa menyimpan",$("#m").textContent||"Gagal menyiapkan audio.");return}
+ac();const st=cv.captureStream(30);dest.stream.getAudioTracks().forEach(t=>st.addTrack(t));
+const mt=["video/webm;codecs=vp9,opus","video/webm;codecs=vp8,opus","video/webm"].find(x=>MediaRecorder.isTypeSupported(x)),ch=[],r=new MediaRecorder(st,mt?{mimeType:mt,videoBitsPerSecond:5e6}:{videoBitsPerSecond:5e6});rec=r;
 r.ondataavailable=e=>e.data.size&&ch.push(e.data);
-r.onstop=()=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(ch,{type:"video/webm"}));a.download="ayat-reels-"+cur().englishName.replace(/[^\w]+/g,"-")+".webm";a.click();m("Selesai. Video tersimpan di folder unduhan.");if(isTrial())addUse();busy(0)};
-busy(1);m("Merekam... biarkan tab ini terbuka.");r.start();onEnd=()=>setTimeout(()=>r.stop(),400);play(0)};
+r.onerror=()=>{expOn=false;onEnd=null;stopP();busy(0);svStage("err","Perekaman gagal","Terjadi kesalahan saat merekam. Coba lagi dengan Chrome.")};
+r.onstop=()=>{expOn=false;busy(0);if(expCancel){svE.hidden=true;m("Penyimpanan dibatalkan.");return}
+const nm="ayat-reels-"+cur().englishName.replace(/[^\w]+/g,"-")+".webm";svUrl=URL.createObjectURL(new Blob(ch,{type:"video/webm"}));const a=document.createElement("a");a.href=svUrl;a.download=nm;a.click();
+$("#svDl").href=svUrl;$("#svDl").setAttribute("download",nm);svStage("done","Video tersimpan","File "+nm+" ada di folder unduhan. Kalau belum terunduh, tekan Unduh lagi.");m("Selesai. Video tersimpan di folder unduhan.");toast("Video berhasil disimpan.");if(isTrial())addUse()};
+busy(1);m("Merekam... biarkan tab ini terbuka.");svStage("rec","Merekam video...","Biarkan tab tetap terbuka.");r.start();
+onEnd=()=>{svStage("fin","Menyusun file video...","Hampir selesai, sedang menyimpan file.");$("#svP").textContent="99%";$("#svBar").classList.remove("ind");$("#svBar").firstElementChild.style.width="99%";setTimeout(()=>r.stop(),400)};play(0)};
 
 /* ---------- gambar ---------- */
 const R=i=>{const x=Math.sin(i*127.1+311.7)*43758.5453;return x-Math.floor(x)},cl=(x,a,b)=>Math.max(a,Math.min(b,x));
@@ -417,7 +485,7 @@ setTheme(document.documentElement.dataset.theme||"dark");
 /* isi teks paket */
 document.querySelectorAll(".tdays").forEach(e=>e.textContent=TRIAL_DAYS);document.querySelectorAll(".tmax").forEach(e=>e.textContent=TRIAL_MAX_AYAT);
 $("#price").textContent=PRICE_TEXT;
-document.querySelectorAll(".tvid").forEach(e=>e.textContent=FREE_EXPORTS_PER_DAY);$("#fMail").setAttribute("href","mailto:"+ADMIN_EMAIL);if(CONTACT_URL){$("#fWa").setAttribute("href",CONTACT_URL+"?text="+encodeURIComponent("Halo admin Ayat Reels, saya ingin bertanya."))}else $("#fWa").hidden=true;if(CONTACT_URL)$("#lHelp").setAttribute("href",CONTACT_URL+"?text="+encodeURIComponent("Halo admin Ayat Reels, saya butuh bantuan login."));else $("#lHelp").hidden=true;$("#xc").textContent="Beli Pro, "+PRICE_TEXT.split(" /")[0];if(CONTACT_URL){$("#subBtn").setAttribute("href",CONTACT_URL);$("#subBtn").setAttribute("target","_blank");$("#subBtn").textContent="Beli Pro lewat WhatsApp"}
+document.querySelectorAll(".tvid").forEach(e=>e.textContent=FREE_EXPORTS_PER_DAY);$("#fMail").setAttribute("href","mailto:"+ADMIN_EMAIL);if(CONTACT_URL){$("#waFab").setAttribute("href",CONTACT_URL+"?text="+encodeURIComponent("Halo admin Ayat Reels, saya mau order paket Pro ("+PRICE_TEXT+"). Mohon info cara pembayarannya."));$("#waFab").hidden=false}if(CONTACT_URL){$("#fWa").setAttribute("href",CONTACT_URL+"?text="+encodeURIComponent("Halo admin Ayat Reels, saya ingin bertanya."))}else $("#fWa").hidden=true;if(CONTACT_URL)$("#lHelp").setAttribute("href",CONTACT_URL+"?text="+encodeURIComponent("Halo admin Ayat Reels, saya butuh bantuan login."));else $("#lHelp").hidden=true;$("#xc").textContent="Beli Pro, "+PRICE_TEXT.split(" /")[0];if(CONTACT_URL){$("#subBtn").setAttribute("href",CONTACT_URL);$("#subBtn").setAttribute("target","_blank");$("#subBtn").textContent="Beli Pro lewat WhatsApp"}
 /* mode login atau daftar */
 let up=false;
 function mode(u){up=u;$("#tabIn").classList.toggle("on",!u);$("#tabUp").classList.toggle("on",u);$("#lt").textContent=u?"Coba gratis":"Masuk";$("#lb").textContent=u?"Buat akun trial":"Masuk";$("#lh").textContent=u?"Gratis"+(TRIAL_DAYS>0?" "+TRIAL_DAYS+" hari":"")+": maksimal "+TRIAL_MAX_AYAT+" ayat per video, "+FREE_EXPORTS_PER_DAY+" video per hari, ada watermark.":"Masuk dengan email dan kata sandi akunmu.";$("#pw").setAttribute("autocomplete",u?"new-password":"current-password");$("#fgw").hidden=u;lm("")}
@@ -436,9 +504,33 @@ window.addEventListener("hashchange",route);
 $("#lback").onclick=()=>{location.hash=""};
 $("#devgo").onclick=()=>{devOK=true;setUser(null);location.hash="#app"};
 $("#xout").onclick=$("#out").onclick=async()=>{stopP();if(sb)await sb.auth.signOut();devOK=false;setUser(null);location.hash=""};
-$("#forgot").onclick=async()=>{if(!sb){lm("Login belum dikonfigurasi.",1);return}const em=$("#em").value.trim();if(!em){lm("Isi emailmu dulu, lalu tekan Lupa kata sandi.",1);return}lm("Mengirim...");const{error}=await sb.auth.resetPasswordForEmail(em,{redirectTo:location.origin+location.pathname});if(error){lm(/rate|seconds/i.test(error.message)?"Tunggu sebentar sebelum meminta email lagi.":"Gagal: "+error.message,1);return}lm("Jika email terdaftar, tautan untuk membuat kata sandi baru sudah dikirim. Cek kotak masuk atau folder spam.")};
-const rmsg=(t,e)=>{$("#rm").textContent=t;$("#rm").classList.toggle("err",!!e)};
-$("#rf").onsubmit=async e=>{e.preventDefault();if(!sb)return;const a=$("#np").value,b=$("#np2").value;if(a.length<6){rmsg("Kata sandi minimal 6 karakter.",1);return}if(a!==b){rmsg("Kedua kata sandi tidak sama.",1);return}$("#rb").disabled=true;rmsg("Menyimpan...");const{error}=await sb.auth.updateUser({password:a});$("#rb").disabled=false;if(error){rmsg("Gagal: "+error.message,1);return}rmsg("");$("#np").value=$("#np2").value="";location.hash="#app";m("Kata sandi berhasil diperbarui.")};
+let toastT=0;function toast(t,er){const e=$("#toast");e.textContent=t;e.classList.toggle("er",!!er);e.classList.add("on");clearTimeout(toastT);toastT=setTimeout(()=>e.classList.remove("on"),4200)}
+const fg=$("#vForgot");let fgTimer=0,fgEmail="";
+const fgMsg=(t,e)=>{["#fgM","#fgM2"].forEach(q=>{$(q).textContent=t;$(q).classList.toggle("err",!!e)})};
+function fgStep(n){document.querySelectorAll("#fgSteps span").forEach((e,i)=>{e.classList.toggle("ok",i<n);e.classList.toggle("on",i===n)})}
+function fgOpen(){fg.hidden=false;$("#fgForm").hidden=false;$("#fgOk").hidden=true;$("#fgEm").value=$("#em").value.trim();fgMsg("");fgStep(0);setTimeout(()=>$("#fgEm").focus(),50)}
+function fgClose(){fg.hidden=true;clearInterval(fgTimer)}
+function fgCool(n){clearInterval(fgTimer);const b=$("#fgRe");b.disabled=true;const tick=()=>{if(n<=0){clearInterval(fgTimer);b.disabled=false;b.textContent="Kirim ulang tautan";return}b.textContent="Kirim ulang dalam "+n+" detik";n--};tick();fgTimer=setInterval(tick,1000)}
+async function fgSend(em,btn,idle){
+if(!sb){fgMsg("Login belum dikonfigurasi.",1);return}
+if(!/^\S+@\S+\.\S+$/.test(em)){fgMsg("Isi email yang valid dulu.",1);return}
+btn.disabled=true;btn.innerHTML='<span class="spin"></span>Mengirim tautan...';fgMsg("Menghubungi server, mohon tunggu...");
+let error=null;try{const r=await sb.auth.resetPasswordForEmail(em,{redirectTo:location.origin+location.pathname});error=r.error}catch(e){error=e}
+btn.disabled=false;btn.textContent=idle;
+if(error){fgMsg(/rate|seconds/i.test(error.message||"")?"Terlalu sering meminta. Tunggu sebentar lalu coba lagi.":"Gagal mengirim: "+(error.message||"periksa koneksi lalu coba lagi."),1);return}
+fgEmail=em;fgMsg("");$("#fgForm").hidden=true;$("#fgOk").hidden=false;$("#fgTo").textContent=em;fgStep(1);fgCool(60);toast("Tautan reset terkirim. Cek emailmu.")}
+$("#forgot").onclick=fgOpen;$("#fgX").onclick=$("#fgDone").onclick=fgClose;fg.onclick=e=>{if(e.target===fg)fgClose()};
+$("#fgGo").onclick=()=>fgSend($("#fgEm").value.trim(),$("#fgGo"),"Kirim tautan reset");
+$("#fgRe").onclick=()=>fgSend(fgEmail,$("#fgRe"),"Kirim ulang tautan").then(()=>{if(!$("#fgOk").hidden&&!$("#fgM2").classList.contains("err"))fgCool(60)});
+$("#fgEm").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("#fgGo").click()}});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!fg.hidden)fgClose()});
+const rmsg=(t,e)=>{$("#rmm").textContent=t;$("#rmm").classList.toggle("err",!!e)};
+$("#rf").onsubmit=async e=>{e.preventDefault();if(!sb)return;const a=$("#np").value,b=$("#np2").value;if(a.length<6){rmsg("Kata sandi minimal 6 karakter.",1);return}if(a!==b){rmsg("Kedua kata sandi tidak sama.",1);return}
+const bt=$("#rb");bt.disabled=true;bt.innerHTML='<span class="spin"></span>Menyimpan kata sandi...';rmsg("Mohon tunggu, jangan tutup halaman ini.");
+let error=null;try{const r=await sb.auth.updateUser({password:a});error=r.error}catch(x){error=x}
+if(error){bt.disabled=false;bt.textContent="Simpan kata sandi";rmsg(/same|different/i.test(error.message||"")?"Kata sandi baru harus berbeda dari yang lama.":"Gagal: "+(error.message||"coba lagi."),1);return}
+bt.innerHTML="Berhasil! Mengalihkan...";rmsg("Kata sandi berhasil diperbarui.");toast("Kata sandi berhasil diperbarui.");$("#np").value=$("#np2").value="";
+setTimeout(()=>{bt.disabled=false;bt.textContent="Simpan kata sandi";rmsg("");location.hash="#app"},1400)};
 $("#lf").onsubmit=async e=>{e.preventDefault();if(!sb){lm("Login belum dikonfigurasi.",1);return}
 const em=$("#em").value.trim(),pw=$("#pw").value;if(!em||!pw){lm("Isi email dan kata sandi.",1);return}
 if(up&&pw.length<6){lm("Kata sandi minimal 6 karakter.",1);return}
@@ -450,7 +542,7 @@ if(up&&!data.session){mode(false);lm("Akun dibuat. Kami sudah mengirim email kon
 $("#pw").value="";lm("");setUser(data.session);location.hash="#app"};
 (async()=>{if(sb){try{const{data}=await sb.auth.getSession();setUser(data.session)}catch(e){}
 if(authErr){pendErr="Tautan sudah kedaluwarsa atau tidak valid. Minta tautan baru lewat Lupa kata sandi.";history.replaceState(null,"",location.pathname);location.hash="#masuk"}else if(user&&isRecovery)location.hash="#reset";else if(user&&hashAuth)location.hash="#app";
-sb.auth.onAuthStateChange((ev,ss)=>{setUser(ss);if(ev==="PASSWORD_RECOVERY")location.hash="#reset";if(!ss&&view==="app")location.hash="#masuk"})}
+sb.auth.onAuthStateChange((ev,ss)=>{setUser(ss);if(ev==="PASSWORD_RECOVERY"){location.hash="#reset";toast("Tautan valid. Silakan buat kata sandi baru.")}if(!ss&&view==="app")location.hash="#masuk"})}
 route()})();
 init();loop();
 })();
