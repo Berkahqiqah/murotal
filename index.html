@@ -3,9 +3,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#060f12">
 <title>Ayat Reels</title>
+<script>try{var t=localStorage.getItem("ar-theme")||(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");document.documentElement.dataset.theme=t}catch(e){document.documentElement.dataset.theme="dark"}</script>
 <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#060f12;--ink:#eef4f1;--mut:#8aa097;--line:rgba(255,255,255,.1);--glass:rgba(255,255,255,.055);--gold:#ffd27a;--peach:#ff9d72;color-scheme:dark}
+:root{--bg:#060f12;--ink:#eef4f1;--mut:#8aa097;--line:rgba(255,255,255,.1);--glass:rgba(255,255,255,.055);--gold:#ffd27a;--peach:#ff9d72;--inp:rgba(0,0,0,.28);--sub:rgba(0,0,0,.2);--opt:#0d1a1d;--err:#ffb4a2;--goldtxt:#ffd27a;color-scheme:dark}
+:root[data-theme="light"]{--bg:#f3f7f5;--ink:#10201b;--mut:#566b62;--line:rgba(10,40,30,.15);--glass:rgba(255,255,255,.75);--gold:#d98a1c;--goldtxt:#9a5a08;--peach:#f07a4a;--inp:rgba(255,255,255,.95);--sub:rgba(255,255,255,.65);--opt:#ffffff;--err:#b3321a;color-scheme:light}
+:root[data-theme="light"] .aura{background:radial-gradient(640px 420px at 12% -6%,rgba(20,184,166,.20),transparent 70%),radial-gradient(520px 420px at 92% 8%,rgba(99,102,241,.14),transparent 70%),radial-gradient(560px 520px at 60% 112%,rgba(255,157,114,.20),transparent 70%)}
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 'Plus Jakarta Sans',system-ui,Arial,sans-serif;-webkit-font-smoothing:antialiased}
 body{padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px);min-height:100vh}
@@ -22,8 +25,8 @@ h1{margin:0;font-size:26px;font-weight:800;letter-spacing:-.03em;line-height:1.1
 .panel{background:var(--glass);border:1px solid var(--line);border-radius:24px;padding:20px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
 h2{margin:0 0 14px;font-size:16px;font-weight:700;letter-spacing:-.01em}
 label{display:block;font-size:12.5px;font-weight:600;color:var(--mut);margin:0 0 6px}
-input,select{width:100%;font:inherit;font-weight:600;color:var(--ink);background:rgba(0,0,0,.28);border:1px solid var(--line);border-radius:14px;padding:11px 14px;min-height:46px}
-select option{background:#0d1a1d}
+input,select{width:100%;font:inherit;font-weight:600;color:var(--ink);background:var(--inp);border:1px solid var(--line);border-radius:14px;padding:11px 14px;min-height:46px}
+select option{background:var(--opt);color:var(--ink)}
 button{font:inherit;cursor:pointer;color:inherit}
 button:disabled{opacity:.5;cursor:default}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
@@ -31,24 +34,24 @@ button:disabled{opacity:.5;cursor:default}
 .cta:active:not(:disabled){transform:scale(.97)}
 .ghost{background:var(--glass);border:1px solid var(--line);border-radius:16px;padding:12px 18px;min-height:48px;font-weight:700}
 .chips{display:flex;gap:8px;flex-wrap:wrap}
-.chip{border:1px solid var(--line);background:rgba(0,0,0,.2);border-radius:99px;padding:9px 16px;font-weight:700;font-size:14px;color:var(--mut)}
-.chip.on{background:var(--ink);color:#0a1613;border-color:var(--ink)}
+.chip{border:1px solid var(--line);background:var(--sub);border-radius:99px;padding:9px 16px;font-weight:700;font-size:14px;color:var(--mut)}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .qg{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
-.q{display:flex;align-items:center;gap:12px;text-align:left;border:1px solid var(--line);background:rgba(0,0,0,.2);border-radius:16px;padding:10px 12px}
+.q{display:flex;align-items:center;gap:12px;text-align:left;border:1px solid var(--line);background:var(--sub);border-radius:16px;padding:10px 12px}
 .q b{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:800;color:#06130f;flex:none}
 .q span{font-weight:600;font-size:13.5px;line-height:1.25}
 .q.on{border-color:var(--gold);background:rgba(255,210,122,.1);box-shadow:0 0 0 1px var(--gold) inset}
 .sws{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px;margin-top:6px}
-.sw{border:1px solid var(--line);background:rgba(0,0,0,.2);border-radius:16px;padding:6px;display:grid;gap:6px;font-size:12px;font-weight:700;color:var(--mut)}
+.sw{border:1px solid var(--line);background:var(--sub);border-radius:16px;padding:6px;display:grid;gap:6px;font-size:12px;font-weight:700;color:var(--mut)}
 .sw i{height:54px;border-radius:11px;display:block;background-size:cover;background-position:center}
-.sw i.up{display:grid;place-items:center;font-size:26px;font-weight:300;color:var(--ink);border:1px dashed rgba(255,255,255,.3);background:rgba(255,255,255,.05)}
+.sw i.up{display:grid;place-items:center;font-size:26px;font-weight:300;color:var(--ink);border:1px dashed var(--mut);background:var(--sub)}
 .mrow{display:flex;gap:10px;align-items:center;margin-top:14px}.mrow[hidden]{display:none}.mrow label{margin:0;white-space:nowrap}.mrow .ghost{min-height:40px;padding:8px 14px}
 .sw.on{border-color:var(--gold);color:var(--ink);box-shadow:0 0 0 1px var(--gold) inset}
 .lbl{margin:18px 0 8px}
 .act{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .act .cta{flex:1 1 200px}
 .msg{margin:12px 0 0;font-size:13px;color:var(--mut);min-height:20px;overflow-wrap:anywhere}
-.msg.err{color:#ffb4a2}
+.msg.err{color:var(--err)}
 .phone{border-radius:44px;padding:10px;background:linear-gradient(160deg,#2c3d39,#0b1412);box-shadow:0 30px 80px rgba(0,0,0,.55),inset 0 0 0 1px rgba(255,255,255,.14)}
 canvas{width:100%;aspect-ratio:9/16;border-radius:34px;background:#000;display:block}
 @media(max-width:919px){.phone{max-width:320px;margin:auto}}
@@ -59,19 +62,137 @@ input[type=range]{padding:0;min-height:0;border:0;background:none;accent-color:v
 .note{color:var(--mut);font-size:12.5px;margin:14px 2px 0}
 :focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+[hidden]{display:none!important}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:22px 0}
+.brand{display:flex;align-items:center;gap:12px;font-weight:800;font-size:19px;letter-spacing:-.02em;background:none;border:0;padding:0}
+.brand .logo{width:40px;height:40px;border-radius:13px}
+.brand .logo svg{width:22px;height:22px}
+.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
+.sm{min-height:42px;padding:9px 18px;font-size:14px;border-radius:14px}
+.hero{display:grid;gap:44px;align-items:center;padding:40px 0 72px}
+@media(min-width:900px){.hero{grid-template-columns:1.15fr .85fr}}
+.badge{display:inline-block;padding:6px 14px;border:1px solid var(--line);background:var(--glass);border-radius:99px;font-size:12.5px;font-weight:700;color:var(--goldtxt)}
+.hero h1{font-size:clamp(34px,6.2vw,58px);line-height:1.04;margin:18px 0 16px;letter-spacing:-.035em}
+.hero h1 em{font-style:normal;background:linear-gradient(120deg,var(--gold),var(--peach));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{font-size:17px;color:var(--mut);max-width:520px;margin:0 0 26px}
+.hbtns{display:flex;gap:12px;flex-wrap:wrap}
+.hbtns .cta,.hbtns .ghost{text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.mock{max-width:290px;margin:auto;transform:rotate(2.5deg)}
+.scr{aspect-ratio:9/16;border-radius:34px;background:linear-gradient(180deg,#070b1f,#1d2d66);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:22px 18px;text-align:center;position:relative;overflow:hidden}
+.scr .pill{position:absolute;top:26px;padding:6px 16px;border-radius:99px;background:rgba(255,255,255,.12);font-size:11px;font-weight:700}
+.scr .ar{font-family:'Amiri Quran',serif;font-size:27px;line-height:1.9;color:#fff;text-shadow:0 0 20px rgba(255,225,160,.45)}
+.scr .bar{width:34px;height:3px;border-radius:2px;background:rgba(255,210,122,.7)}
+.scr .tr{font-size:11.5px;color:rgba(255,255,255,.85);line-height:1.5}
+.scr .qr{position:absolute;bottom:44px;font-size:10px;color:rgba(255,255,255,.6);font-weight:600}
+.scr .pg{position:absolute;bottom:30px;left:18%;right:18%;height:3px;border-radius:2px;background:rgba(255,255,255,.18)}
+.scr .pg i{display:block;width:38%;height:100%;border-radius:2px;background:var(--gold)}
+.sec{padding:24px 0 56px}
+.sec h2.t{font-size:clamp(24px,4vw,34px);letter-spacing:-.03em;margin:0 0 8px}
+.sec p.d{color:var(--mut);margin:0 0 26px;max-width:560px}
+.cards{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.card{background:var(--glass);border:1px solid var(--line);border-radius:22px;padding:22px}
+.card .n{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-weight:800;font-size:13px;color:#2a1405;background:linear-gradient(140deg,var(--gold),var(--peach));margin-bottom:14px}
+.card h3{margin:0 0 6px;font-size:16.5px;letter-spacing:-.01em}
+.card p{margin:0;color:var(--mut);font-size:14px}
+.band{margin:8px 0 56px;padding:40px 24px;border-radius:28px;text-align:center;border:1px solid var(--line);background:linear-gradient(135deg,rgba(20,184,166,.16),rgba(255,157,114,.14))}
+.band h2{font-size:clamp(22px,4vw,30px);margin:0 0 8px;letter-spacing:-.03em}
+.band p{color:var(--mut);margin:0 auto 22px;max-width:480px}
+.band .cta{display:inline-flex;text-decoration:none;align-items:center}
+.foot{padding:20px 0 40px;border-top:1px solid var(--line);color:var(--mut);font-size:12.5px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.lw{min-height:100vh;display:grid;place-items:center;padding:24px 18px}
+.lc{width:100%;max-width:400px}
+.lc .brand{margin:0 auto 22px;display:flex;justify-content:center}
+.lc .panel{padding:26px}
+.lc h2{font-size:20px;margin-bottom:4px}
+.lc .hint{color:var(--mut);font-size:13.5px;margin:0 0 18px}
+.fld{margin-bottom:14px}
+.lc .cta{width:100%;margin-top:6px}
+.back{display:block;margin:16px auto 0;background:none;border:0;color:var(--mut);font-size:13.5px;font-weight:600;text-decoration:underline}
+.dev{margin-top:14px;padding:12px 14px;border-radius:14px;border:1px dashed rgba(255,210,122,.5);font-size:12.5px;color:var(--goldtxt)}
+.dev button{margin-top:8px;display:block}
+.usr{margin-left:auto;display:flex;align-items:center;gap:10px;min-width:0}
+.usr #who{font-size:12.5px;color:var(--mut);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px}
+@media(max-width:560px){.usr #who{display:none}}
+
+.tgl{width:42px;min-height:42px;padding:0;display:inline-grid;place-items:center;border-radius:14px}
+.tgl svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+:root[data-theme="light"] .i-sun{display:none}
+:root:not([data-theme="light"]) .i-moon{display:none}
+.nr{display:flex;gap:8px;align-items:center}
+.ltg{position:fixed;top:calc(16px + env(safe-area-inset-top,0px));right:16px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border:1px solid var(--line);border-radius:16px;background:var(--sub);margin-bottom:18px}
+.seg button{border:0;background:none;border-radius:12px;padding:10px;font-weight:700;font-size:14px;color:var(--mut)}
+.seg button.on{background:var(--ink);color:var(--bg)}
+.plans{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));max-width:760px}
+.plan{background:var(--glass);border:1px solid var(--line);border-radius:24px;padding:26px;display:flex;flex-direction:column}
+.plan.pro{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}
+.plan h3{margin:0;font-size:15px;color:var(--mut);font-weight:700}
+.plan .pr{font-size:28px;font-weight:800;letter-spacing:-.03em;margin:6px 0 14px}
+.plan ul{list-style:none;padding:0;margin:0 0 22px;display:grid;gap:9px;font-size:14px;flex:1}
+.plan li{padding-left:22px;position:relative}
+.plan li:before{content:"";position:absolute;left:2px;top:.5em;width:9px;height:5px;border-left:2px solid var(--gold);border-bottom:2px solid var(--gold);transform:rotate(-45deg)}
+.plan li.no{color:var(--mut)}.plan li.no:before{border:0;width:9px;height:2px;background:var(--mut);transform:none;top:.75em}
+.plan .cta,.plan .ghost{text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.tag{font-size:12px;font-weight:800;padding:5px 11px;border-radius:99px;border:1px solid var(--gold);color:var(--goldtxt);white-space:nowrap}
+.tag.exp{border-color:var(--err);color:var(--err)}
+.xw{min-height:100vh;display:grid;place-items:center;padding:24px 18px;text-align:center}
+.xw .panel{max-width:420px;padding:30px}
+.xw h2{font-size:22px}.xw p{color:var(--mut);margin:0 0 20px}
+.xw .cta{text-decoration:none;display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px}
 </style></head><body>
 <div class="aura"></div>
+<div id="vLand"><div class="w">
+<nav class="nav"><div class="brand"><div class="logo"><svg viewBox="0 0 24 24" fill="#2a1405"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/></svg></div>Ayat Reels</div><div class="nr"><button class="tgl ghost" type="button" aria-label="Ganti tema gelap atau terang"><svg viewBox="0 0 24 24" aria-hidden="true"><g class="i-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></g><path class="i-moon" d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/></svg></button><a class="ghost btn sm" id="navBtn" href="#masuk">Masuk</a></div></nav>
+<section class="hero"><div>
+<span class="badge">Coba gratis atau berlangganan</span>
+<h1>Ubah ayat Al-Qur'an jadi <em>video reels</em> dalam hitungan menit.</h1>
+<p class="lead">Pilih surah dan ayat, pilih suara qari, pilih latar. Teks Arab, terjemahan Indonesia, dan audio langsung disusun jadi video vertikal siap unggah.</p>
+<div class="hbtns"><a class="cta btn" href="#daftar" id="heroBtn">Coba gratis</a><a class="ghost btn" href="#harga">Lihat paket</a></div></div>
+<div class="phone mock" aria-hidden="true"><div class="scr"><span class="pill">Al-Fatihah</span>
+<div class="ar" dir="rtl">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ ﴿١﴾</div><div class="bar"></div>
+<div class="tr">Dengan nama Allah Yang Maha Pengasih, Maha Penyayang.</div>
+<div class="qr">Misyari Rasyid Alafasy</div><div class="pg"><i></i></div></div></div></section>
+<section class="sec" id="fitur"><h2 class="t">Semua yang dibutuhkan untuk satu video</h2><p class="d">Tanpa aplikasi edit video. Semua berjalan di browser kamu.</p>
+<div class="cards">
+<div class="card"><div class="n">01</div><h3>Surah dan ayat bebas</h3><p>Pilih surah lalu tentukan dari ayat berapa sampai ayat berapa. Durasi video mengikuti panjang bacaan.</p></div>
+<div class="card"><div class="n">02</div><h3>Banyak pilihan qari</h3><p>Dengarkan bacaan dari qari ternama, dengan teks Arab dan terjemahan Indonesia yang tampil bergantian.</p></div>
+<div class="card"><div class="n">03</div><h3>Latar sesuka hati</h3><p>Pakai tema siap pakai atau unggah gambar dan video sendiri. File hanya diproses di browser, tidak dikirim ke server.</p></div>
+<div class="card"><div class="n">04</div><h3>Simpan sekali klik</h3><p>Pratinjau dulu, lalu simpan sebagai video vertikal 9:16 untuk Reels, Shorts, atau TikTok.</p></div></div></section>
+<section class="sec" id="harga"><h2 class="t">Pilih paket</h2><p class="d">Mulai dari trial gratis, lanjut berlangganan kalau cocok.</p>
+<div class="plans">
+<div class="plan"><h3>Trial</h3><div class="pr">Gratis</div><ul><li><span class="tdays"></span> hari percobaan</li><li>Maksimal <span class="tmax"></span> ayat per video</li><li>Semua surah, qari, dan latar</li><li class="no">Ada watermark di video</li></ul><a class="ghost btn" href="#daftar">Coba gratis</a></div>
+<div class="plan pro"><h3>Langganan</h3><div class="pr" id="price"></div><ul><li>Jumlah ayat tanpa batas</li><li>Tanpa watermark</li><li>Semua surah, qari, dan latar</li><li>Unggah gambar dan video sendiri</li></ul><a class="cta btn" href="#masuk" id="subBtn">Berlangganan</a></div></div></section>
+<section class="sec"><h2 class="t">Cara pakainya</h2><p class="d">Tiga langkah saja.</p>
+<div class="cards">
+<div class="card"><div class="n">1</div><h3>Daftar atau masuk</h3><p>Mulai dengan akun trial, atau masuk ke akun langgananmu.</p></div>
+<div class="card"><div class="n">2</div><h3>Atur video</h3><p>Pilih surah, ayat, qari, dan latar.</p></div>
+<div class="card"><div class="n">3</div><h3>Buat dan simpan</h3><p>Tekan Buat video, cek pratinjau, lalu simpan.</p></div></div></section>
+<section class="band"><h2>Siap bikin video pertamamu?</h2><p>Daftar trial gratis, tanpa kartu kredit.</p><a class="cta btn" href="#daftar" id="bandBtn">Coba gratis</a></section>
+<footer class="foot"><span>Ayat Reels</span><span>Teks dari alquran.cloud, audio dari islamic.network.</span></footer>
+</div></div>
+<div id="vLogin" hidden><button class="tgl ghost ltg" type="button" aria-label="Ganti tema gelap atau terang"><svg viewBox="0 0 24 24" aria-hidden="true"><g class="i-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></g><path class="i-moon" d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/></svg></button><div class="lw"><div class="lc">
+<div class="brand"><div class="logo"><svg viewBox="0 0 24 24" fill="#2a1405"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/></svg></div>Ayat Reels</div>
+<section class="panel"><div class="seg" role="tablist"><button type="button" id="tabIn" class="on">Masuk</button><button type="button" id="tabUp">Coba gratis</button></div><h2 id="lt">Masuk</h2><p class="hint" id="lh"></p>
+<form id="lf" novalidate>
+<div class="fld"><label for="em">Email</label><input id="em" type="email" autocomplete="username" required></div>
+<div class="fld"><label for="pw">Kata sandi</label><input id="pw" type="password" autocomplete="current-password" required></div>
+<button class="cta" id="lb" type="submit">Masuk</button>
+<p class="msg" id="lm" role="alert"></p></form>
+<div class="dev" id="dev" hidden>Login belum dikonfigurasi. Isi SUPABASE_URL dan SUPABASE_ANON_KEY di bagian script agar aplikasi benar-benar terkunci.<button class="ghost sm" id="devgo" type="button">Lanjut tanpa login (mode pengembangan)</button></div>
+</section><button class="back" id="lback" type="button">Kembali ke beranda</button></div></div></div>
+<div id="vExp" hidden><div class="xw"><section class="panel"><h2 id="xt">Masa aktif berakhir</h2><p id="xp"></p><a class="cta btn" id="xc" href="#" target="_blank" rel="noopener">Hubungi untuk berlangganan</a><button class="ghost" id="xout" type="button">Keluar</button></section></div></div>
+<div id="vApp" hidden>
 <div class="w">
 <header><div class="logo"><svg viewBox="0 0 24 24" fill="#2a1405"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/></svg></div>
-<div><h1>Ayat Reels</h1><p class="sub">Pilih ayat dan qari, videonya jadi otomatis.</p></div></header>
+<div><h1>Ayat Reels</h1><p class="sub">Pilih ayat dan qari, videonya jadi otomatis.</p></div>
+<div class="usr"><span class="tag" id="tag" hidden></span><span id="who"></span><button class="tgl ghost" type="button" aria-label="Ganti tema gelap atau terang"><svg viewBox="0 0 24 24" aria-hidden="true"><g class="i-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></g><path class="i-moon" d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/></svg></button><button class="ghost sm" id="out" type="button">Keluar</button></div></header>
 <div class="grid"><div class="col">
 <section class="panel"><h2>Surah dan ayat</h2>
 <label for="sur">Surah</label><select id="sur"></select>
 <div class="two"><div><label for="fr">Dari ayat</label><input id="fr" type="number" min="1" value="1"></div>
 <div><label for="to">Sampai ayat</label><input id="to" type="number" min="1" value="10"></div></div>
-<p class="lbl" style="margin-bottom:8px"></p>
-<label>Target durasi</label><div class="chips" id="durs"></div>
-<div style="margin-top:12px"><button class="ghost" id="fit">Pas-kan ayat ke durasi</button></div></section>
+</section>
 <section class="panel"><h2>Suara qari</h2><div class="qg" id="qs"></div></section>
 <section class="panel"><h2>Latar video</h2><div class="sws" id="ths"></div>
 <div class="mrow" id="mc" hidden><label for="dim">Gelapkan latar</label><input type="range" id="dim" min="0" max="0.8" step="0.05" value="0.35"><button class="ghost" id="chg">Ganti</button><button class="ghost" id="rm">Hapus</button></div>
@@ -84,26 +205,34 @@ input[type=range]{padding:0;min-height:0;border:0;background:none;accent-color:v
 <div class="pl"><button class="ghost" id="pp">Putar</button><input type="range" id="sk" min="0" max="0" step="0.01" value="0" aria-label="Posisi"><span class="tm" id="tm">0:00</span></div>
 <p class="note">Teks dari alquran.cloud, audio dari islamic.network. Video direkam real-time ke WebM, biarkan tab terbuka. Pakai Chrome di komputer atau Android.</p></aside>
 </div></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
 (()=>{
 const $=q=>document.querySelector(q),W=720,H=1280,cv=$("#cv"),g=cv.getContext("2d");
 const QARI=[["ar.alafasy","Misyari Rasyid Alafasy",128,"Alafasy_128kbps","MA"],["ar.husary","Mahmoud Khalil Al-Husary",128,"Husary_128kbps","KH"],["ar.minshawi","Muhammad Siddiq Al-Minshawi",128,"Minshawy_Murattal_128kbps","MM"],["ar.abdulbasitmurattal","Abdul Basit Abdus Samad",192,"Abdul_Basit_Murattal_192kbps","AB"],["ar.abdurrahmaansudais","Abdurrahman As-Sudais",192,"Abdurrahmaan_As-Sudais_192kbps","AS"],["ar.shaatree","Abu Bakr Ash-Shatri",128,"Abu_Bakr_Ash-Shaatree_128kbps","SH"],["ar.hudhaify","Ali Al-Hudhaify",64,"Hudhaify_128kbps","AH"],["ar.mahermuaiqly","Maher Al-Muaiqly",128,"Maher_AlMuaiqly_128kbps","MQ"]];
 const TH=[{n:"Malam",a:"#070b1f",b:"#1d2d66"},{n:"Fajar",a:"#1c1740",b:"#c8655f"},{n:"Hutan",a:"#06140f",b:"#1a5a3a"},{n:"Laut",a:"#04182b",b:"#0e6ba0"},{n:"Emas",a:"#120d05",b:"#5a4112"},{n:"Senja",a:"#2a0f4d",b:"#ff7a59"},{n:"Gurun",a:"#0a1030",b:"#c98d4a"},{n:"Aurora",a:"#030f1d",b:"#0b3a4a"},{n:"Kabut",a:"#162434",b:"#7fa0b5"},{n:"Zamrud",a:"#021a12",b:"#0d7a52"},{n:"Polos",a:"#030303",b:"#14202a"}];
-const S={dur:60,th:0,qari:0,dim:.35},M={el:null,v:false,on:false,url:"",name:""};
+/* ---------- LOGIN (Supabase Auth) ----------
+   Isi dua nilai ini dari Supabase: Project Settings > API */
+const SUPABASE_URL="",SUPABASE_ANON_KEY="";
+/* Pengaturan paket */
+const TRIAL_DAYS=3,TRIAL_MAX_AYAT=3,PRICE_TEXT="Hubungi admin",CONTACT_URL="";/* contoh CONTACT_URL: "https://wa.me/628xxxxxxxxxx" */
+const sb=SUPABASE_URL&&SUPABASE_ANON_KEY&&window.supabase?window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY):null;
+let user=null,tok="",devOK=false,view="";
+const S={th:0,qari:0,dim:.35},M={el:null,v:false,on:false,url:"",name:""};
 let surahs=[],txt={},bufs={},segs=[],total=0,ready=false;
 let AC,dest,srcs=[],t0=0,playing=false,off=0,onEnd=null;
 const m=(t,e)=>{$("#m").textContent=t;$("#m").classList.toggle("err",!!e)},fmt=t=>Math.floor(t/60)+":"+String(Math.floor(t%60)).padStart(2,"0");
 const ac=()=>{if(!AC){AC=new(window.AudioContext||window.webkitAudioContext)();dest=AC.createMediaStreamDestination()}return AC};
-const busy=b=>["#prep","#fit","#exp"].forEach(q=>$(q).disabled=!!b);
+const busy=b=>["#prep","#exp"].forEach(q=>$(q).disabled=!!b);
 const cur=()=>surahs[+$("#sur").value-1],qari=()=>QARI[S.qari];
 
 /* ---------- kontrol ---------- */
 const mkb=(par,cls,html,fn,ds)=>{const b=document.createElement("button");b.className=cls;b.innerHTML=html;b.onclick=fn;Object.assign(b.dataset,ds);$(par).appendChild(b)};
-[30,60,90,120].forEach(d=>mkb("#durs","chip",d<60?d+" detik":d/60+" menit",()=>{S.dur=d;mk()},{d}));
 QARI.forEach((q,i)=>mkb("#qs","q",'<b style="background:linear-gradient(140deg,hsl('+(i*47+30)+',85%,72%),hsl('+(i*47+80)+',75%,58%))">'+q[4]+"</b><span>"+q[1]+"</span>",()=>{S.qari=i;ready=false;stopP();off=0;mk()},{i}));
-mkb("#ths","sw",'<i class="up">+</i><span>Unggah</span>',()=>{if(M.el){M.on=true;if(playing&&M.v)M.el.play().catch(()=>{});mk()}else $("#fm").click()},{i:-1});
+mkb("#ths","sw",'<i class="up">+</i><span>Unggah</span>',()=>{if(M.el){M.on=true;if(playing&&M.v)M.el.play().catch(()=>{});mk()}else if(isTrial()){m("Unggah latar sendiri hanya untuk paket Langganan.",1)}else $("#fm").click()},{i:-1});
 TH.forEach((t,i)=>mkb("#ths","sw",'<i style="background:linear-gradient(180deg,'+t.a+","+t.b+')"></i><span>'+t.n+"</span>",()=>{S.th=i;M.on=false;if(M.v&&M.el)M.el.pause();mk()},{i}));
-function mk(){[...$("#durs").children].forEach(b=>b.classList.toggle("on",+b.dataset.d===S.dur));[...$("#qs").children].forEach(b=>b.classList.toggle("on",+b.dataset.i===S.qari));[...$("#ths").children].forEach(b=>{const i=+b.dataset.i;b.classList.toggle("on",i===-1?M.on:(i===S.th&&!M.on))});$("#mc").hidden=!M.el}
+function mk(){[...$("#qs").children].forEach(b=>b.classList.toggle("on",+b.dataset.i===S.qari));[...$("#ths").children].forEach(b=>{const i=+b.dataset.i;b.classList.toggle("on",i===-1?M.on:(i===S.th&&!M.on))});$("#mc").hidden=!M.el}
 function thumb(el,w,h){const c=document.createElement("canvas");c.width=c.height=100;const x=c.getContext("2d"),r=Math.max(100/w,100/h);x.drawImage(el,(100-w*r)/2,(100-h*r)/2,w*r,h*r);return c.toDataURL("image/jpeg",.7)}
 function fin(el,url,name,v){if(M.el&&M.v)M.el.pause();if(M.url)URL.revokeObjectURL(M.url);M.el=el;M.v=v;M.url=url;M.name=name;M.on=true;const w=v?el.videoWidth:el.naturalWidth,h=v?el.videoHeight:el.naturalHeight,t=$("#ths").children[0],i=t.querySelector("i");try{i.style.backgroundImage="url("+thumb(el,w,h)+")"}catch(e){}i.className="";i.textContent="";t.querySelector("span").textContent="Milikmu";if(playing&&v)el.play().catch(()=>{});mk();m("Latar dipakai: "+name)}
 $("#fm").onchange=e=>{const f=e.target.files[0];e.target.value="";if(!f)return;const url=URL.createObjectURL(f);if(f.type.startsWith("video")){const el=document.createElement("video");el.muted=true;el.loop=true;el.playsInline=true;el.preload="auto";el.onloadeddata=()=>{el.onloadeddata=null;fin(el,url,f.name,true)};el.onerror=()=>m("Video ini tidak bisa dibuka browser. Coba format MP4.",1);el.src=url}else{const el=new Image();el.onload=()=>fin(el,url,f.name,false);el.onerror=()=>m("Gambar ini tidak bisa dibuka.",1);el.src=url}};
@@ -116,10 +245,10 @@ document.fonts.load('40px "Amiri Quran"',"بسم");document.fonts.load('700 26px
 
 /* ---------- data ---------- */
 const SL="Al-Fatihah|الفاتحة|7;Al-Baqarah|البقرة|286;Ali 'Imran|آل عمران|200;An-Nisa'|النساء|176;Al-Ma'idah|المائدة|120;Al-An'am|الأنعام|165;Al-A'raf|الأعراف|206;Al-Anfal|الأنفال|75;At-Tawbah|التوبة|129;Yunus|يونس|109;Hud|هود|123;Yusuf|يوسف|111;Ar-Ra'd|الرعد|43;Ibrahim|إبراهيم|52;Al-Hijr|الحجر|99;An-Nahl|النحل|128;Al-Isra'|الإسراء|111;Al-Kahf|الكهف|110;Maryam|مريم|98;Ta-Ha|طه|135;Al-Anbiya'|الأنبياء|112;Al-Hajj|الحج|78;Al-Mu'minun|المؤمنون|118;An-Nur|النور|64;Al-Furqan|الفرقان|77;Ash-Shu'ara'|الشعراء|227;An-Naml|النمل|93;Al-Qasas|القصص|88;Al-'Ankabut|العنكبوت|69;Ar-Rum|الروم|60;Luqman|لقمان|34;As-Sajdah|السجدة|30;Al-Ahzab|الأحزاب|73;Saba'|سبأ|54;Fatir|فاطر|45;Ya-Sin|يس|83;As-Saffat|الصافات|182;Sad|ص|88;Az-Zumar|الزمر|75;Ghafir|غافر|85;Fussilat|فصلت|54;Ash-Shura|الشورى|53;Az-Zukhruf|الزخرف|89;Ad-Dukhan|الدخان|59;Al-Jathiyah|الجاثية|37;Al-Ahqaf|الأحقاف|35;Muhammad|محمد|38;Al-Fath|الفتح|29;Al-Hujurat|الحجرات|18;Qaf|ق|45;Adh-Dhariyat|الذاريات|60;At-Tur|الطور|49;An-Najm|النجم|62;Al-Qamar|القمر|55;Ar-Rahman|الرحمن|78;Al-Waqi'ah|الواقعة|96;Al-Hadid|الحديد|29;Al-Mujadilah|المجادلة|22;Al-Hashr|الحشر|24;Al-Mumtahanah|الممتحنة|13;As-Saff|الصف|14;Al-Jumu'ah|الجمعة|11;Al-Munafiqun|المنافقون|11;At-Taghabun|التغابن|18;At-Talaq|الطلاق|12;At-Tahrim|التحريم|12;Al-Mulk|الملك|30;Al-Qalam|القلم|52;Al-Haqqah|الحاقة|52;Al-Ma'arij|المعارج|44;Nuh|نوح|28;Al-Jinn|الجن|28;Al-Muzzammil|المزمل|20;Al-Muddaththir|المدثر|56;Al-Qiyamah|القيامة|40;Al-Insan|الإنسان|31;Al-Mursalat|المرسلات|50;An-Naba'|النبأ|40;An-Nazi'at|النازعات|46;'Abasa|عبس|42;At-Takwir|التكوير|29;Al-Infitar|الانفطار|19;Al-Mutaffifin|المطففين|36;Al-Inshiqaq|الانشقاق|25;Al-Buruj|البروج|22;At-Tariq|الطارق|17;Al-A'la|الأعلى|19;Al-Ghashiyah|الغاشية|26;Al-Fajr|الفجر|30;Al-Balad|البلد|20;Ash-Shams|الشمس|15;Al-Layl|الليل|21;Ad-Duha|الضحى|11;Ash-Sharh|الشرح|8;At-Tin|التين|8;Al-'Alaq|العلق|19;Al-Qadr|القدر|5;Al-Bayyinah|البينة|8;Az-Zalzalah|الزلزلة|8;Al-'Adiyat|العاديات|11;Al-Qari'ah|القارعة|11;At-Takathur|التكاثر|8;Al-'Asr|العصر|3;Al-Humazah|الهمزة|9;Al-Fil|الفيل|5;Quraysh|قريش|4;Al-Ma'un|الماعون|7;Al-Kawthar|الكوثر|3;Al-Kafirun|الكافرون|6;An-Nasr|النصر|3;Al-Masad|المسد|5;Al-Ikhlas|الإخلاص|4;Al-Falaq|الفلق|5;An-Nas|الناس|6";
-function init(){surahs=SL.split(";").map((x,i)=>{const p=x.split("|");return{number:i+1,englishName:p[0],name:"سورة "+p[1],numberOfAyahs:+p[2]}});surahs.forEach(s=>$("#sur").add(new Option(s.number+". "+s.englishName+" ("+s.numberOfAyahs+" ayat)",s.number)));$("#sur").value=78;$("#to").value=10;m("Tekan Pas-kan ayat ke durasi, lalu Buat video.")}
+function init(){surahs=SL.split(";").map((x,i)=>{const p=x.split("|");return{number:i+1,englishName:p[0],name:"سورة "+p[1],numberOfAyahs:+p[2]}});surahs.forEach(s=>$("#sur").add(new Option(s.number+". "+s.englishName+" ("+s.numberOfAyahs+" ayat)",s.number)));$("#sur").value=78;$("#to").value=10;m("Pilih surah dan ayat, lalu tekan Buat video.")}
 const strip=s=>s.replace(/[\u064B-\u065F\u0670\u0640]/g,"");
 /* ambil lewat proxy Vercel (/api/get) dulu, kalau tidak ada baru langsung */
-async function fx(u,kind){const r1=[];for(const t of ["/api/get?u="+encodeURIComponent(u),u]){try{const r=await fetch(t);if(r.ok)return kind==="json"?await r.json():await r.arrayBuffer();r1.push(r.status)}catch(e){r1.push("diblokir")}}throw new Error(new URL(u).host+" (proxy: "+r1[0]+", langsung: "+r1[1]+")")}
+async function fx(u,kind){const r1=[];for(const t of ["/api/get?u="+encodeURIComponent(u),u]){try{const r=await fetch(t,t===u||!tok?{}:{headers:{Authorization:"Bearer "+tok}});if(r.ok)return kind==="json"?await r.json():await r.arrayBuffer();r1.push(r.status)}catch(e){r1.push("diblokir")}}throw new Error(new URL(u).host+" (proxy: "+r1[0]+", langsung: "+r1[1]+")")}
 async function getText(n){if(txt[n])return txt[n];let rows;
 try{const j=await fx("https://api.alquran.cloud/v1/surah/"+n+"/editions/quran-uthmani,id.indonesian","json"),a=j.data[0].ayahs,b=j.data[1].ayahs;rows=a.map((x,i)=>({gl:x.number,num:x.numberInSurah,ar:x.text,id:b[i].text}))}
 catch(e1){try{const[u,t]=await Promise.all([fx("https://api.quran.com/api/v4/quran/verses/uthmani?chapter_number="+n,"json"),fx("https://api.quran.com/api/v4/quran/translations/33?chapter_number="+n,"json")]);rows=u.verses.map((x,i)=>({gl:x.id,num:+x.verse_key.split(":")[1],ar:x.text_uthmani,id:t.translations[i].text.replace(/<[^>]+>/g,"")}))}
@@ -129,9 +258,7 @@ async function getBuf(a,n){const q=qari(),k=q[0]+a.gl;if(bufs[k])return bufs[k];
 try{ab=await fx("https://cdn.islamic.network/quran/audio/"+q[2]+"/"+q[0]+"/"+a.gl+".mp3")}catch(e1){try{ab=await fx("https://everyayah.com/data/"+q[3]+"/"+s3+".mp3")}catch(e2){throw new Error("Audio gagal diunduh. "+e1.message+" | "+e2.message)}}
 try{return bufs[k]=await ac().decodeAudioData(ab)}catch(e){throw new Error("File audio tidak bisa dibaca browser.")}}
 
-async function prep(){stopP();ready=false;busy(1);try{const n=+$("#sur").value,T=await getText(n),f=Math.max(1,Math.min(T.length,+$("#fr").value||1)),t=Math.min(T.length,Math.max(f,+$("#to").value||f));$("#fr").value=f;$("#to").value=t;const list=T.slice(f-1,t);m("Mengunduh audio "+list.length+" ayat...");const bs=await Promise.all(list.map(a=>getBuf(a,n)));let c=1;segs=list.map((a,i)=>{const s={a,buf:bs[i],start:c,dur:bs[i].duration};c+=s.dur+.7;return s});total=c+.5;$("#sk").max=total;off=0;ready=true;m("Siap: ayat "+f+" sampai "+t+", durasi "+fmt(total)+".")}catch(e){m(e.message||"Gagal menyiapkan audio.",1)}busy(0)}
-async function fit(){busy(1);try{const n=+$("#sur").value,T=await getText(n),f=Math.max(1,Math.min(T.length,+$("#fr").value||1));let acc=1,t=f;for(let i=f;i<=T.length;i++){m("Menghitung durasi... ayat "+i);const d=(await getBuf(T[i-1],n)).duration+.7;if(i>f&&acc+d>S.dur-.5)break;acc+=d;t=i}$("#fr").value=f;$("#to").value=t}catch(e){m(e.message||"Gagal menghitung durasi.",1);busy(0);return}busy(0);await prep()}
-$("#fit").onclick=fit;
+async function prep(){stopP();ready=false;busy(1);try{const n=+$("#sur").value,T=await getText(n),f=Math.max(1,Math.min(T.length,+$("#fr").value||1)),t=Math.min(T.length,Math.max(f,+$("#to").value||f),isTrial()?f+TRIAL_MAX_AYAT-1:1e9);$("#fr").value=f;$("#to").value=t;const list=T.slice(f-1,t);m("Mengunduh audio "+list.length+" ayat...");const bs=await Promise.all(list.map(a=>getBuf(a,n)));let c=1;segs=list.map((a,i)=>{const s={a,buf:bs[i],start:c,dur:bs[i].duration};c+=s.dur+.7;return s});total=c+.5;$("#sk").max=total;off=0;ready=true;m("Siap: ayat "+f+" sampai "+t+", durasi "+fmt(total)+"."+(isTrial()?" Trial: maksimal "+TRIAL_MAX_AYAT+" ayat dan ada watermark.":""))}catch(e){m(e.message||"Gagal menyiapkan audio.",1)}busy(0)}
 
 /* ---------- pemutaran ---------- */
 function stopP(){srcs.forEach(s=>{try{s.stop()}catch(e){}});srcs=[];playing=false;$("#pp").textContent="Putar";if(M.v&&M.el)M.el.pause()}
@@ -139,7 +266,7 @@ function play(from){if(!ready)return;stopP();const c=ac();c.resume();t0=c.curren
 $("#prep").onclick=async()=>{await prep();if(ready)play(0)};
 $("#pp").onclick=async()=>{if(!ready){await prep();if(ready)play(0);return}if(playing){off=AC.currentTime-t0;stopP()}else play(off>=total-.1?0:off)};
 $("#sk").oninput=e=>{const t=+e.target.value;if(playing)play(t);else{off=t;if(M.on&&M.v)M.el.currentTime=t%(M.el.duration||1)}};
-function loop(){let t=playing?AC.currentTime-t0:off;if(playing&&t>=total){stopP();off=0;t=total;if(onEnd){const f=onEnd;onEnd=null;f()}}
+function loop(){if($("#vApp").hidden){requestAnimationFrame(loop);return}let t=playing?AC.currentTime-t0:off;if(playing&&t>=total){stopP();off=0;t=total;if(onEnd){const f=onEnd;onEnd=null;f()}}
 if(playing)off=t;draw(t);$("#sk").value=t;$("#tm").textContent=fmt(t)+" / "+fmt(total);requestAnimationFrame(loop)}
 
 /* ---------- ekspor ---------- */
@@ -170,7 +297,7 @@ const v=g.createLinearGradient(0,H*.6,0,H);v.addColorStop(0,"rgba(0,0,0,0)");v.a
 const AR=n=>String(n).replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]),SF='"Plus Jakarta Sans"';
 function wrap(s,font,dir,maxW){g.font=font;g.direction=dir;const L=[];let c="";s.split(" ").forEach(x=>{const tt=c?c+" "+x:x;if(g.measureText(tt).width>maxW&&c){L.push(c);c=x}else c=tt});if(c)L.push(c);return L}
 function rr(x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath()}
-function draw(t){bg(t);g.textAlign="center";g.textBaseline="alphabetic";const s=cur();
+function draw(t){bg(t);if(isTrial()){g.save();g.globalAlpha=.6;g.fillStyle="#fff";g.font="700 22px "+SF;g.textAlign="center";g.direction="ltr";g.fillText("Ayat Reels - Trial",W/2,H-64);g.restore()}g.textAlign="center";g.textBaseline="alphabetic";const s=cur();
 if(s){g.direction="ltr";g.font="700 24px "+SF;const lab=s.englishName,w=g.measureText(lab).width+56;g.fillStyle="rgba(255,255,255,.12)";rr(W/2-w/2,96,w,52,26);g.fill();g.fillStyle="#fff";g.fillText(lab,W/2,130);
 g.direction="rtl";g.font='60px "Amiri Quran"';g.fillStyle="#ffe0a0";g.fillText(s.name,W/2,222)}
 let c=null;segs.forEach(x=>{if(t>=x.start-.2)c=x});
@@ -183,6 +310,53 @@ const y=top+L.length*lh+6;g.fillStyle="rgba(255,210,122,.7)";rr(W/2-36,y,72,4,2)
 g.direction="ltr";g.font="500 "+ts+"px "+SF;g.fillStyle="rgba(255,255,255,.85)";T.forEach((l,i)=>g.fillText(l,W/2,y+44+i*tl));
 g.globalAlpha=1;g.font="600 22px "+SF;g.fillStyle="rgba(255,255,255,.65)";g.fillText(qari()[1],W/2,H-168);
 g.fillStyle="rgba(255,255,255,.18)";rr(100,H-128,W-200,6,3);g.fill();g.fillStyle="#ffd27a";rr(100,H-128,Math.max(6,(W-200)*cl(t/total,0,1)),6,3);g.fill()}
+
+/* ---------- halaman dan login ---------- */
+const lm=(t,e)=>{$("#lm").textContent=t;$("#lm").classList.toggle("err",!!e)};
+const DAY=864e5,dstr=d=>d.toLocaleDateString("id-ID",{day:"numeric",month:"short",year:"numeric"});
+function plan(){if(!user)return{t:"dev"};const am=user.app_metadata||{};
+if(am.plan==="pro"){const u=am.pro_until?new Date(am.pro_until):null;if(u&&u.getTime()+DAY<Date.now())return{t:"expired",why:"Langgananmu"};return{t:"pro",until:u}}
+const end=new Date(new Date(user.created_at).getTime()+TRIAL_DAYS*DAY);if(end<Date.now())return{t:"expired",why:"Masa trial"};return{t:"trial",until:end}}
+const isTrial=()=>plan().t==="trial";
+function setUser(ss){user=ss&&ss.user||null;tok=ss&&ss.access_token||"";$("#who").textContent=user?user.email:"";const ok=user||devOK,lbl=ok?"Buka aplikasi":"Masuk";$("#navBtn").textContent=lbl;$("#heroBtn").textContent=ok?"Buka aplikasi":"Coba gratis";$("#heroBtn").setAttribute("href",ok?"#app":"#daftar");$("#bandBtn").textContent=ok?"Buka aplikasi":"Coba gratis";$("#bandBtn").setAttribute("href",ok?"#app":"#daftar");
+const p=plan(),tg=$("#tag");tg.hidden=p.t==="dev";tg.className="tag";if(p.t==="trial"){const d=Math.max(1,Math.ceil((p.until-Date.now())/DAY));tg.textContent="Trial, sisa "+d+" hari"}else if(p.t==="pro"){tg.textContent=p.until?"Langganan s/d "+dstr(p.until):"Langganan aktif"}else if(p.t==="expired"){tg.textContent="Berakhir";tg.classList.add("exp")}}
+/* tema */
+function setTheme(t){document.documentElement.dataset.theme=t;const mt=document.querySelector('meta[name="theme-color"]');if(mt)mt.content=t==="light"?"#f3f7f5":"#060f12";try{localStorage.setItem("ar-theme",t)}catch(e){}}
+document.querySelectorAll(".tgl").forEach(b=>b.onclick=()=>setTheme(document.documentElement.dataset.theme==="light"?"dark":"light"));
+setTheme(document.documentElement.dataset.theme||"dark");
+/* isi teks paket */
+document.querySelectorAll(".tdays").forEach(e=>e.textContent=TRIAL_DAYS);document.querySelectorAll(".tmax").forEach(e=>e.textContent=TRIAL_MAX_AYAT);
+$("#price").textContent=PRICE_TEXT;
+if(CONTACT_URL){["#subBtn","#xc"].forEach(q=>{$(q).setAttribute("href",CONTACT_URL);$(q).setAttribute("target","_blank")});$("#subBtn").textContent="Hubungi untuk berlangganan"}else{$("#xc").hidden=true}
+/* mode login atau daftar */
+let up=false;
+function mode(u){up=u;$("#tabIn").classList.toggle("on",!u);$("#tabUp").classList.toggle("on",u);$("#lt").textContent=u?"Coba gratis":"Masuk";$("#lb").textContent=u?"Buat akun trial":"Masuk";$("#lh").textContent=u?TRIAL_DAYS+" hari gratis, maksimal "+TRIAL_MAX_AYAT+" ayat per video, ada watermark.":"Masuk dengan email dan kata sandi akunmu.";$("#pw").setAttribute("autocomplete",u?"new-password":"current-password");lm("")}
+$("#tabIn").onclick=()=>mode(false);$("#tabUp").onclick=()=>mode(true);
+function route(){const h=location.hash,ok=!!user||devOK;let v=h==="#app"?"app":(h==="#masuk"||h==="#daftar")?"login":"land";
+if(v==="app"&&!ok){location.hash="#masuk";return}
+if(v==="login"&&ok){location.hash="#app";return}
+if(v==="app"&&plan().t==="expired"){const p=plan();$("#xt").textContent=p.why+" sudah berakhir";$("#xp").textContent=CONTACT_URL?"Berlangganan untuk melanjutkan membuat video tanpa batas.":"Hubungi admin untuk berlangganan dan melanjutkan.";v="exp"}
+if(view==="app"&&v!=="app"){stopP();off=0}
+view=v;$("#vLand").hidden=v!=="land";$("#vLogin").hidden=v!=="login";$("#vApp").hidden=v!=="app";$("#vExp").hidden=v!=="exp";$("#dev").hidden=!!sb;
+if(v==="login")mode(h==="#daftar");
+if(h==="#fitur"||h==="#harga"){$("#vLand").hidden=false;$(h).scrollIntoView();return}
+window.scrollTo(0,0);if(v==="login")setTimeout(()=>$("#em").focus(),50)}
+window.addEventListener("hashchange",route);
+$("#lback").onclick=()=>{location.hash=""};
+$("#devgo").onclick=()=>{devOK=true;setUser(null);location.hash="#app"};
+$("#xout").onclick=$("#out").onclick=async()=>{stopP();if(sb)await sb.auth.signOut();devOK=false;setUser(null);location.hash=""};
+$("#lf").onsubmit=async e=>{e.preventDefault();if(!sb){lm("Login belum dikonfigurasi.",1);return}
+const em=$("#em").value.trim(),pw=$("#pw").value;if(!em||!pw){lm("Isi email dan kata sandi.",1);return}
+if(up&&pw.length<6){lm("Kata sandi minimal 6 karakter.",1);return}
+$("#lb").disabled=true;lm("Memeriksa...");
+const r=up?await sb.auth.signUp({email:em,password:pw}):await sb.auth.signInWithPassword({email:em,password:pw});$("#lb").disabled=false;
+const{data,error}=r;
+if(error){lm(/invalid|credentials/i.test(error.message)?"Email atau kata sandi salah.":/confirm/i.test(error.message)?"Email belum dikonfirmasi. Cek kotak masukmu.":/registered|exists/i.test(error.message)?"Email ini sudah terdaftar. Silakan masuk.":"Gagal: "+error.message,1);return}
+if(up&&!data.session){lm("Akun dibuat. Cek email untuk konfirmasi, lalu masuk.");mode(false);return}
+$("#pw").value="";lm("");setUser(data.session);location.hash="#app"};
+(async()=>{if(sb){try{const{data}=await sb.auth.getSession();setUser(data.session)}catch(e){}
+sb.auth.onAuthStateChange((ev,ss)=>{setUser(ss);if(!ss&&view==="app")location.hash="#masuk"})}
+route()})();
 init();loop();
 })();
 </script></body></html>
