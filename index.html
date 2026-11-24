@@ -260,8 +260,8 @@ button.tag{background:var(--glass);font:inherit;font-size:12px;font-weight:800}
 <span class="badge">Paket Pro</span><h2 id="pt">Upgrade ke Pro</h2>
 <div class="pr" id="payPrice"></div>
 <ul><li class="ck">Aktif selamanya, bayar sekali</li><li class="ck">Video dan ayat tanpa batas</li><li class="ck">Tanpa watermark</li><li class="ck">Unggah gambar dan video sendiri</li></ul>
-<ol><li id="payS1"></li><li>Kirim bukti bayar dan email akunmu ke admin lewat WhatsApp.</li><li>Setelah admin mengaktifkan, tekan "Cek status Pro" di bawah. Pro berlaku selamanya.</li></ol>
-<a class="cta" id="payWa" href="#" target="_blank" rel="noopener">Konfirmasi lewat WhatsApp</a>
+<ol><li>Tekan tombol WhatsApp di bawah. Pesan ke admin sudah terisi otomatis, tinggal kirim.</li><li>Admin membalas dengan detail pembayaran (QRIS atau transfer). Bayar, lalu kirim bukti bayarnya.</li><li>Setelah admin mengaktifkan Pro, tekan "Cek status Pro". Pro berlaku selamanya.</li></ol>
+<a class="cta" id="payWa" href="#" target="_blank" rel="noopener">Beli lewat WhatsApp</a>
 <button class="ghost" id="payChk" type="button">Cek status Pro</button>
 <p class="msg" id="payNote"></p></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.105.1/dist/umd/supabase.js"></script>
@@ -274,7 +274,7 @@ const TH=[{n:"Malam",a:"#070b1f",b:"#1d2d66"},{n:"Fajar",a:"#1c1740",b:"#c8655f"
    Isi dua nilai ini dari Supabase: Project Settings > API */
 const SUPABASE_URL="https://amktgzdvkuiachxwrcsi.supabase.co",SUPABASE_ANON_KEY="sb_publishable_dzsT6aE7JIY3-C9nR71Ldw_sbhjhnMD";
 /* Pengaturan paket */
-const TRIAL_DAYS=3,TRIAL_MAX_AYAT=3,FREE_EXPORTS_PER_DAY=2,PRICE_TEXT="Rp 49.000 / sekali bayar",WA_NUMBER="6289633044451",ADMIN_EMAIL="aditya.rizal.752@gmail.com",PAY_INFO="";
+const TRIAL_DAYS=3,TRIAL_MAX_AYAT=3,FREE_EXPORTS_PER_DAY=2,PRICE_TEXT="Rp 49.000 / sekali bayar",WA_NUMBER="6289633044451",ADMIN_EMAIL="aditya.rizal.752@gmail.com";
 const CONTACT_URL=WA_NUMBER?"https://wa.me/"+WA_NUMBER:"";/* WA_NUMBER contoh: "6281234567890". PAY_INFO contoh: "Transfer BCA 123456 a.n. Nama, atau QRIS" *//* contoh CONTACT_URL: "https://wa.me/628xxxxxxxxxx" */
 const sb=SUPABASE_URL&&SUPABASE_ANON_KEY&&window.supabase?window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY):null;
 const hashAuth=/access_token=/.test(location.hash),isRecovery=/type=recovery/.test(location.hash),authErr=(/error_description=([^&]+)/.exec(location.search+location.hash)||[])[1];
@@ -403,8 +403,7 @@ $("#avBtn").onclick=toggleMenu;$("#tag").onclick=toggleMenu;
 document.addEventListener("click",e=>{if(!$("#menu").hidden&&!e.target.closest(".acc")&&e.target!==$("#tag"))closeMenu()});
 /* beli Pro */
 function openPro(){closeMenu();$("#payPrice").innerHTML=PRICE_TEXT.replace(" /","<small> /")+(PRICE_TEXT.includes(" /")?"</small>":"");
-$("#payS1").textContent=PAY_INFO?"Bayar "+PRICE_TEXT.split(" /")[0]+" ke: "+PAY_INFO:"Minta detail pembayaran (QRIS atau transfer) ke admin lewat WhatsApp.";
-const msg="Halo admin, saya mau beli Ayat Reels Pro ("+PRICE_TEXT+"). Email akun saya: "+(user?user.email:"-");
+const msg="Halo admin, saya mau beli Ayat Reels Pro ("+PRICE_TEXT+"). Mohon kirim detail pembayarannya. Email akun saya: "+(user?user.email:"-");
 $("#payWa").hidden=!WA_NUMBER;if(WA_NUMBER)$("#payWa").setAttribute("href",CONTACT_URL+"?text="+encodeURIComponent(msg));
 $("#payNote").textContent=WA_NUMBER?"":"Nomor WhatsApp admin belum diisi (WA_NUMBER di index.html).";$("#payChk").hidden=!sb||!user;$("#vPay").hidden=false}
 function closePro(){$("#vPay").hidden=true}
