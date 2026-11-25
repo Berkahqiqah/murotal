@@ -232,6 +232,23 @@ input[type=color]{padding:4px 6px;cursor:pointer}
 .bg.pro{border-color:var(--gold);color:var(--goldtxt)}.bg.ok{border-color:#25d366;color:#25d366}.bg.no{border-color:var(--err);color:var(--err)}
 .empty{color:var(--mut);text-align:center;padding:22px 0;font-size:14px;margin:0}
 #vAdmin header .usr{flex-wrap:wrap}
+
+/* ---- mode video sendiri ---- */
+textarea{width:100%;font:inherit;font-weight:600;font-size:13px;color:var(--ink);background:var(--inp);border:1px solid var(--line);border-radius:14px;padding:11px 14px;resize:vertical}
+#pOwn h3{margin:18px 0 4px;font-size:14px}
+#pOwn details{margin-top:14px}#pOwn summary{cursor:pointer;font-weight:700;font-size:13.5px;color:var(--mut)}
+#pOwn details textarea{margin-top:10px;min-height:110px}
+.ol{position:relative;display:grid;gap:6px;margin-top:10px;max-height:320px;overflow:auto;padding-right:2px}
+.orow{display:grid;grid-template-columns:78px minmax(0,1fr) 34px 34px 34px 34px;gap:6px;align-items:center;padding:4px 6px;border:1px solid transparent;border-radius:12px}
+.orow.hi{border-color:var(--gold);background:rgba(255,210,122,.1)}
+.orow span{font-size:13px;font-weight:700}
+.orow input{min-height:36px;padding:6px 10px;font-size:13px;border-radius:10px}
+.orow button{min-height:34px;height:34px;padding:0;border:1px solid var(--line);background:var(--sub);border-radius:10px;font-weight:800;font-size:14px}
+.syn{margin-top:16px;padding:16px;border:1px solid var(--line);border-radius:20px;background:var(--glass)}
+.syn .note{margin:0 0 8px}
+.syn .syw{font-family:'Amiri Quran','Amiri',serif;font-size:22px;line-height:1.7;margin:0 0 10px;text-align:center;min-height:0}
+.tapb{width:100%;min-height:68px;font-size:17px;margin-bottom:10px;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.syn .act .ghost{flex:1 1 90px;min-height:40px;padding:8px 10px;font-size:13px}
 </style></head><body>
 <div class="aura"></div>
 <div id="vLand"><div class="w">
@@ -312,15 +329,29 @@ input[type=color]{padding:4px 6px;cursor:pointer}
 <button class="mi" id="out" type="button">Keluar</button>
 </div></div></div></header>
 <div class="grid"><div class="col">
+<section class="panel"><h2>Sumber suara dan video</h2><div class="chips" id="src"></div><p class="note" style="margin-top:12px" id="srcN"></p></section>
 <section class="panel"><h2>Surah dan ayat</h2>
 <label for="sur">Surah</label><select id="sur"></select>
 <div class="two"><div><label for="fr">Dari ayat</label><input id="fr" type="number" min="1" value="1"></div>
 <div><label for="to">Sampai ayat</label><input id="to" type="number" min="1" value="10" inputmode="numeric"></div></div>
 <p class="note" id="ayh" style="margin-top:10px"></p>
 </section>
-<section class="panel"><h2>Suara qari</h2><div class="qg" id="qs"></div></section>
+<section class="panel" id="pOwn" hidden><h2>Video murotal sendiri</h2>
+<div class="act"><button class="ghost" id="oUp" type="button">Unggah video</button><button class="ghost" id="oAud" type="button">Audio terpisah (opsional)</button></div>
+<input type="file" id="fo" accept="video/*" hidden><input type="file" id="foa" accept="audio/*,video/*" hidden>
+<p class="note" id="oInfo" style="margin-top:10px">Belum ada video. Pakai MP4 (H.264 + AAC) agar paling aman. Maksimal 400 MB.</p>
+<label style="margin-top:14px">Posisi video di layar</label><div class="chips" id="oFit"></div>
+<div class="rg"><label for="oDim">Gelapkan video</label><input type="range" id="oDim" min="0" max="0.8" step="0.05" value="0.3"><output id="o_oDim">30%</output></div>
+<div class="fld" style="margin-top:12px"><label for="oQ">Nama qari di video (opsional)</label><input id="oQ" type="text" placeholder="Contoh: Misyari Rasyid Alafasy" autocomplete="off"></div>
+<h3>Waktu tiap ayat</h3>
+<p class="note" style="margin:0 0 10px">Aplikasi tidak bisa tahu kapan qari pindah ayat, jadi waktunya ditandai. Cara tercepat: tekan Mulai tandai ayat di bawah pratinjau, lalu ketuk tiap kali ayat baru dimulai. Setelah itu rapikan di daftar ini.</p>
+<div class="act"><button class="ghost sm" id="oEst" type="button">Isi perkiraan otomatis</button><button class="ghost sm" id="oSm" type="button">Geser semua -0,1 dtk</button><button class="ghost sm" id="oSp" type="button">Geser semua +0,1 dtk</button><button class="ghost sm" id="oClr" type="button">Hapus semua</button></div>
+<div class="ol" id="oList"></div>
+<details><summary>Salin atau tempel waktu</summary><textarea id="oTs" rows="6" spellcheck="false" placeholder="1=0.40&#10;2=7.85"></textarea><div class="act" style="margin-top:8px"><button class="ghost sm" id="oApply" type="button">Terapkan waktu ini</button></div><p class="note" style="margin-top:8px">Satu baris per ayat: nomor ayat, tanda sama dengan, lalu detik (boleh 1:05.3). Nomor 0 berarti teks dikosongkan.</p></details>
+</section>
+<section class="panel" id="pQari"><h2>Suara qari</h2><div class="qg" id="qs"></div></section>
 <section class="panel"><h2>Format video</h2><div class="chips" id="ars"></div><p class="note" style="margin-top:12px">Berlaku untuk pratinjau dan video yang disimpan. Hasil simpan berformat MP4.</p></section>
-<section class="panel"><h2>Latar video</h2><div class="sws" id="ths"></div>
+<section class="panel" id="pLatar"><h2>Latar video</h2><div class="sws" id="ths"></div>
 <div class="mrow" id="mc" hidden><label for="dim">Gelapkan latar</label><input type="range" id="dim" min="0" max="0.8" step="0.05" value="0.35"><button class="ghost" id="chg">Ganti</button><button class="ghost" id="rm">Hapus</button></div>
 <input type="file" id="fm" accept="image/*,video/*" hidden>
 <p class="note" style="margin-top:12px">Punya gambar atau video sendiri? Tekan Unggah. File hanya dipakai di browser kamu dan tidak dikirim ke server.</p></section>
@@ -345,6 +376,11 @@ input[type=color]{padding:4px 6px;cursor:pointer}
 </div>
 <aside class="side"><div class="phone"><canvas id="cv" width="720" height="1280" aria-label="Pratinjau video"></canvas></div>
 <div class="pl"><button class="ghost" id="pp">Putar</button><input type="range" id="sk" min="0" max="0" step="0.01" value="0" aria-label="Posisi"><span class="tm" id="tm">0:00</span></div>
+<div class="syn" id="sync" hidden>
+<p class="note" id="syS"></p><p class="syw" id="syW" dir="rtl" lang="ar"></p>
+<button class="cta tapb" id="tapB" type="button">Mulai tandai ayat</button>
+<div class="act"><button class="ghost" id="tapU" type="button">Urungkan</button><button class="ghost" id="tapG" type="button">Teks kosong</button><button class="ghost" id="tapD" type="button">Selesai</button></div>
+</div>
 <p class="note">Teks dari alquran.cloud, audio dari islamic.network. Video direkam real-time ke MP4, biarkan tab terbuka. Pakai Chrome, Edge, atau Safari terbaru.</p></aside>
 </div></div>
 </div>
@@ -423,7 +459,8 @@ const CONTACT_URL=WA_NUMBER?"https://wa.me/"+WA_NUMBER:"";/* WA_NUMBER contoh: "
 const sb=SUPABASE_URL&&SUPABASE_ANON_KEY&&window.supabase?window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY):null;
 const hashAuth=/access_token=/.test(location.hash),isRecovery=/type=recovery/.test(location.hash),isSignup=/type=signup/.test(location.hash),authErr=(/error_description=([^&]+)/.exec(location.search+location.hash)||[])[1];
 let user=null,tok="",devOK=false,view="",pendErr="";
-const S={th:0,qari:0,dim:.35,ar:"9:16"},M={el:null,v:false,on:false,url:"",name:""};
+const S={th:0,qari:0,dim:.35,ar:"9:16",mode:"qari",oDim:.3,oFit:"cover",oQ:""},M={el:null,v:false,on:false,url:"",name:""};
+const O={el:null,vbuf:null,abuf:null,url:"",name:"",aname:"",size:0,rows:[],map:new Map()};let OM=[],syncing=false,lastHi=-2;
 let surahs=[],txt={},bufs={},segs=[],total=0,ready=false;
 let AC,dest,srcs=[],t0=0,playing=false,off=0,onEnd=null;
 const m=(t,e)=>{$("#m").textContent=t;$("#m").classList.toggle("err",!!e)},fmt=t=>Math.floor(t/60)+":"+String(Math.floor(t%60)).padStart(2,"0");
@@ -454,7 +491,7 @@ function fillAyat(){const s=cur();if(!s)return;$("#fr").max=$("#to").max=s.numbe
 function clampAyat(){const s=cur();if(!s)return;const n=s.numberOfAyahs,f=Math.min(n,Math.max(1,+$("#fr").value||1));let t=Math.min(n,Math.max(f,+$("#to").value||f));if(isTrial()&&TRIAL_MAX_AYAT>0)t=Math.min(t,f+TRIAL_MAX_AYAT-1);$("#fr").value=f;$("#to").value=t}
 ["#fr","#to"].forEach(q=>$(q).addEventListener("input",()=>{ayDirty=true}));
 $("#sur").addEventListener("change",fillAyat);
-["#sur","#fr","#to"].forEach(q=>$(q).onchange=()=>{ready=false;stopP();off=0});
+["#sur","#fr","#to"].forEach(q=>$(q).onchange=()=>{ready=false;stopP();off=0;syncing=false;if(q==="#sur"){OM=[];ownRestore()}ownRender()});
 ["#fr","#to"].forEach(q=>$(q).addEventListener("change",()=>{clampAyat();ayHint()}));
 /* ---------- tampilan teks dan logo ---------- */
 const AFN=[["Amiri Quran","Amiri Quran (bawaan)"],["Amiri","Amiri"],["Scheherazade New","Scheherazade New"],["Noto Naskh Arabic","Noto Naskh Arabic"],["Lateef","Lateef"]],TFN=[["Plus Jakarta Sans","Plus Jakarta Sans (bawaan)"],["Poppins","Poppins"],["Inter","Inter"],["Montserrat","Montserrat"],["Nunito","Nunito"],["Lora","Lora (serif)"]];
@@ -504,16 +541,17 @@ async function getBuf(a,n){const q=qari(),k=q[0]+a.gl;if(bufs[k])return bufs[k];
 try{ab=await fx("https://cdn.islamic.network/quran/audio/"+q[2]+"/"+q[0]+"/"+a.gl+".mp3")}catch(e1){try{ab=await fx("https://everyayah.com/data/"+q[3]+"/"+s3+".mp3")}catch(e2){throw new Error("Audio gagal diunduh. "+e1.message+" | "+e2.message)}}
 try{return bufs[k]=await ac().decodeAudioData(ab)}catch(e){throw new Error("File audio tidak bisa dibaca browser.")}}
 
-async function prep(){stopP();ready=false;busy(1);try{const n=+$("#sur").value,T=await getText(n),f=Math.max(1,Math.min(T.length,+$("#fr").value||1)),t=Math.min(T.length,Math.max(f,+$("#to").value||f),isTrial()&&TRIAL_MAX_AYAT>0?f+TRIAL_MAX_AYAT-1:1e9);$("#fr").value=f;$("#to").value=t;const list=T.slice(f-1,t);m("Mengunduh audio "+list.length+" ayat...");const bs=await Promise.all(list.map(a=>getBuf(a,n)));let c=1;segs=list.map((a,i)=>{const s={a,buf:bs[i],start:c,dur:bs[i].duration};c+=s.dur+.7;return s});total=c+.5;$("#sk").max=total;off=0;ready=true;m("Siap: ayat "+f+" sampai "+t+", durasi "+fmt(total)+"."+(isTrial()?(TRIAL_MAX_AYAT>0?" Trial: maksimal "+TRIAL_MAX_AYAT+" ayat dan ada watermark.":" Trial: ada watermark."):""))}catch(e){m(e.message||"Gagal menyiapkan audio.",1)}busy(0)}
+async function prep(){return S.mode==="own"?prepOwn():prepQ()}
+async function prepQ(){stopP();ready=false;busy(1);try{const n=+$("#sur").value,T=await getText(n),f=Math.max(1,Math.min(T.length,+$("#fr").value||1)),t=Math.min(T.length,Math.max(f,+$("#to").value||f),isTrial()&&TRIAL_MAX_AYAT>0?f+TRIAL_MAX_AYAT-1:1e9);$("#fr").value=f;$("#to").value=t;const list=T.slice(f-1,t);m("Mengunduh audio "+list.length+" ayat...");const bs=await Promise.all(list.map(a=>getBuf(a,n)));let c=1;segs=list.map((a,i)=>{const s={a,buf:bs[i],start:c,dur:bs[i].duration};c+=s.dur+.7;return s});total=c+.5;$("#sk").max=total;off=0;ready=true;m("Siap: ayat "+f+" sampai "+t+", durasi "+fmt(total)+"."+(isTrial()?(TRIAL_MAX_AYAT>0?" Trial: maksimal "+TRIAL_MAX_AYAT+" ayat dan ada watermark.":" Trial: ada watermark."):""))}catch(e){m(e.message||"Gagal menyiapkan audio.",1)}busy(0)}
 
 /* ---------- pemutaran ---------- */
-function stopP(){srcs.forEach(s=>{try{s.stop()}catch(e){}});srcs=[];playing=false;$("#pp").textContent="Putar";if(M.v&&M.el)M.el.pause()}
-function play(from){if(!ready)return;stopP();const c=ac();c.resume();t0=c.currentTime-from;segs.forEach(s=>{if(s.start+s.dur<=from)return;const n=c.createBufferSource();n.buffer=s.buf;n.connect(c.destination);n.connect(dest);n.start(c.currentTime+Math.max(0,s.start-from),Math.max(0,from-s.start));srcs.push(n)});playing=true;$("#pp").textContent="Jeda";if(M.on&&M.v){M.el.currentTime=from%(M.el.duration||1);M.el.play().catch(()=>{})}}
+function stopP(){srcs.forEach(s=>{try{s.stop()}catch(e){}});srcs=[];playing=false;$("#pp").textContent="Putar";pv()}
+function play(from){if(!ready)return;stopP();const c=ac();c.resume();t0=c.currentTime-from;segs.forEach(s=>{if(s.start+s.dur<=from)return;const n=c.createBufferSource();n.buffer=s.buf;n.connect(c.destination);n.connect(dest);n.start(c.currentTime+Math.max(0,s.start-from),Math.max(0,from-s.start));srcs.push(n)});playing=true;$("#pp").textContent="Jeda";{const ve=VE();if(ve){ve.currentTime=from%(ve.duration||1);ve.play().catch(()=>{})}}}
 $("#prep").onclick=async()=>{await prep();if(ready)play(0)};
 $("#pp").onclick=async()=>{if(!ready){await prep();if(ready)play(0);return}if(playing){off=AC.currentTime-t0;stopP()}else play(off>=total-.1?0:off)};
-$("#sk").oninput=e=>{const t=+e.target.value;if(playing)play(t);else{off=t;if(M.on&&M.v)M.el.currentTime=t%(M.el.duration||1)}};
-function loop(){if($("#vApp").hidden||rnd){requestAnimationFrame(loop);return}let t=playing?AC.currentTime-t0:off;if(playing&&t>=total){stopP();off=0;t=total;if(onEnd){const f=onEnd;onEnd=null;f()}}
-if(playing)off=t;if(expOn&&playing)expUpd(t);draw(t);$("#sk").value=t;$("#tm").textContent=fmt(t)+" / "+fmt(total);requestAnimationFrame(loop)}
+$("#sk").oninput=e=>{const t=+e.target.value;if(playing)play(t);else{off=t;const ve=VE();if(ve)ve.currentTime=t%(ve.duration||1)}};
+function loop(){if($("#vApp").hidden||rnd){requestAnimationFrame(loop);return}let t=playing?AC.currentTime-t0:off;if(playing&&t>=total){stopP();off=0;t=total;if(syncing){syncing=false;tapUI()}if(onEnd){const f=onEnd;onEnd=null;f()}}
+if(playing)off=t;if(expOn&&playing)expUpd(t);if(S.mode==="own"){if(playing&&O.el&&!O.el.seeking){const d=O.el.duration||1,w=t%d;if(Math.abs(O.el.currentTime-w)>.3){try{O.el.currentTime=w}catch(e){}}}ownHi(t)}draw(t);$("#sk").value=t;$("#tm").textContent=fmt(t)+" / "+fmt(total);requestAnimationFrame(loop)}
 
 /* ---------- ekspor ---------- */
 let expOn=false,expCancel=false,rec=null,svUrl="";
@@ -551,8 +589,8 @@ ve.configure({codec:cfg.vc,width:W,height:H,bitrate:6e6,framerate:FPS,avc:{forma
 ae=new AudioEncoder({output:(c,mt)=>mux.addAudioChunk(c,mt),error:e=>{err=e}});
 ae.configure({codec:cfg.ac,sampleRate:SR,numberOfChannels:2,bitrate:128e3});
 let ap=0;const CH=4800,pushA=upto=>{while(ap<AL&&ap/SR<upto){const n=Math.min(CH,AL-ap),d=new Float32Array(n*2);d.set(c0.subarray(ap,ap+n),0);d.set(c1.subarray(ap,ap+n),n);const ad=new AudioData({format:"f32-planar",sampleRate:SR,numberOfFrames:n,numberOfChannels:2,timestamp:Math.round(ap/SR*1e6),data:d});ae.encode(ad);ad.close();ap+=n}};
-if(M.on&&M.v)M.el.pause();
-for(let i=0;i<N;i++){if(expCancel||err)break;const t=i/FPS;if(M.on&&M.v)await seekV(M.el,t);draw(Math.min(t,total));
+const vEl=VE();if(vEl)vEl.pause();
+for(let i=0;i<N;i++){if(expCancel||err)break;const t=i/FPS;if(vEl)await seekV(vEl,t);draw(Math.min(t,total));
 const fr=new VideoFrame(cv,{timestamp:Math.round(i*1e6/FPS),duration:Math.round(1e6/FPS)});ve.encode(fr,{keyFrame:i%60===0});fr.close();pushA(t+.5);
 while(!err&&!expCancel&&(ve.encodeQueueSize>8||ae.encodeQueueSize>30))await yl();
 if(i%5===0){const p=Math.min(99,Math.floor(i/N*100));$("#svBar").firstElementChild.style.width=p+"%";$("#svP").textContent=p+"%";$("#svS").textContent="Memproses video, sisa "+fmt(Math.max(0,total-t))+". Biarkan tab tetap terbuka.";await yl()}}
@@ -566,8 +604,9 @@ $("#svDl").href=svUrl;$("#svDl").setAttribute("download",nm);
 svStage("done","Video tersimpan","File "+nm+" ada di folder unduhan. Kalau belum terunduh, tekan Unduh lagi. Format MP4 H.264"+(cfg.am==="aac"?" + AAC, siap diunggah ke TikTok, Reels, dan YouTube.":" + Opus. Audio Opus kadang ditolak TikTok. Kalau gagal, coba Chrome atau Edge terbaru di laptop."));
 m("Selesai. Video tersimpan di folder unduhan.");toast("Video berhasil disimpan.");if(isTrial())addUse();expOn=false;return true
 }catch(e){console.warn("expWC",e);try{if(ve&&ve.state!=="closed")ve.close()}catch(x){}try{if(ae&&ae.state!=="closed")ae.close()}catch(x){}return false}
-finally{rnd=false;busy(0);if(M.on&&M.v)try{M.el.currentTime=0}catch(e){}}}
+finally{rnd=false;busy(0);{const vx=VE();if(vx)try{vx.currentTime=0}catch(e){}}}}
 $("#exp").onclick=async()=>{if(expOn)return;if(isTrial()&&FREE_EXPORTS_PER_DAY>0&&exportsLeft()<=0){m("Limit hari ini habis ("+FREE_EXPORTS_PER_DAY+" video). Upgrade ke Pro untuk tanpa batas, atau coba lagi besok.",1);openPro();return}expOn=true;expCancel=false;svUrl="";
+if(S.mode==="own"&&ready&&ownMissing().length)ready=false;
 if(!ready){svStage("prep","Menyiapkan audio...","Mengunduh audio dan teks ayat. Ini hanya sebentar.");await prep()}
 if(!ready){expOn=false;svStage("err","Belum bisa menyimpan",$("#m").textContent||"Gagal menyiapkan audio.");return}
 ac();stopP();off=0;if(WC()){let ok=false;try{ok=await expWC()}catch(e){console.warn("WebCodecs gagal",e)}if(ok||expCancel)return}
@@ -587,7 +626,8 @@ onEnd=()=>{svStage("fin","Menyusun file video...","Hampir selesai, sedang menyim
 /* ---------- gambar ---------- */
 const R=i=>{const x=Math.sin(i*127.1+311.7)*43758.5453;return x-Math.floor(x)},cl=(x,a,b)=>Math.max(a,Math.min(b,x));
 function bg(t){
-if(M.on&&M.el){const el=M.el,w=M.v?el.videoWidth:el.naturalWidth,h=M.v?el.videoHeight:el.naturalHeight;g.fillStyle="#000";g.fillRect(0,0,W,H);if(w&&h){const r=Math.max(W/w,H/h);g.drawImage(el,(W-w*r)/2,(H-h*r)/2,w*r,h*r)}g.fillStyle="rgba(0,0,0,"+S.dim+")";g.fillRect(0,0,W,H)}
+if(S.mode==="own"&&O.el){const el=O.el,w=el.videoWidth,h=el.videoHeight;g.fillStyle="#000";g.fillRect(0,0,W,H);if(w&&h){const r=(S.oFit==="contain"?Math.min:Math.max)(W/w,H/h);g.drawImage(el,(W-w*r)/2,(H-h*r)/2,w*r,h*r)}g.fillStyle="rgba(0,0,0,"+S.oDim+")";g.fillRect(0,0,W,H)}
+else if(M.on&&M.el){const el=M.el,w=M.v?el.videoWidth:el.naturalWidth,h=M.v?el.videoHeight:el.naturalHeight;g.fillStyle="#000";g.fillRect(0,0,W,H);if(w&&h){const r=Math.max(W/w,H/h);g.drawImage(el,(W-w*r)/2,(H-h*r)/2,w*r,h*r)}g.fillStyle="rgba(0,0,0,"+S.dim+")";g.fillRect(0,0,W,H)}
 else{const k=S.th,th=TH[k],gr=g.createLinearGradient(0,0,0,H);gr.addColorStop(0,th.a);gr.addColorStop(1,th.b);g.fillStyle=gr;g.fillRect(0,0,W,H);
 if(k===0){for(let i=0;i<70;i++){g.fillStyle="rgba(255,255,255,"+(.3+.7*Math.abs(Math.sin(t*1.2+i)))+")";g.beginPath();g.arc(R(i)*W,R(i+99)*H*.8,R(i+7)*2+.6,0,7);g.fill()}
 g.save();g.beginPath();g.rect(0,0,W,H);g.arc(W*.847+28,H*.234-10,58,0,Math.PI*2,true);g.clip();g.fillStyle="#f5f0d0";g.shadowColor="#f5f0d0";g.shadowBlur=40;g.beginPath();g.arc(W*.847,H*.234,70,0,7);g.fill();g.restore()}
@@ -616,15 +656,148 @@ const col=S.lgP%3,mx=Ld?28:36,x=col===0?mx:col===1?(W-w)/2:W-w-mx,y=S.lgP<3?(Ld?
 function draw(t){bg(t);const Ld=W>H;if(isTrial()){g.save();g.globalAlpha=.6;g.fillStyle="#fff";g.font="700 "+(Ld?18:22)+"px "+SF;g.textAlign=Ld?"right":"center";g.direction="ltr";g.fillText("Ayat Reels - Trial",Ld?W-28:W/2,Ld?H-20:H-64);g.restore()}g.textAlign="center";g.textBaseline="alphabetic";drawLogo();const s=cur();
 if(s){g.direction="ltr";g.font="700 "+(Ld?20:24)+"px "+SF;const lab=s.englishName,w=g.measureText(lab).width+56,py=Ld?40:96;g.fillStyle="rgba(255,255,255,.12)";rr(W/2-w/2,py,w,Ld?44:52,Ld?22:26);g.fill();g.fillStyle="#fff";g.fillText(lab,W/2,py+(Ld?30:34));
 g.direction="rtl";g.font=(Ld?48:60)+'px "'+S.fA+'"';g.fillStyle="#ffe0a0";g.fillText(s.name,W/2,Ld?128:222)}
-let c=null;if(ready)segs.forEach(x=>{if(t>=x.start-.2)c=x});else c=DEMO;
+let c=null;if(S.mode==="own"&&ready)c=ownCur(t);else if(ready)segs.forEach(x=>{if(t>=x.start-.2)c=x});else c=DEMO;
 if(!c)return;
-let a=c===DEMO?1:cl((t-(c.start-.2))/.6,0,1);if(c!==DEMO&&c===segs[segs.length-1])a*=cl(total-t,0,1);g.globalAlpha=a;
+let a=c===DEMO?1:c.own?cl((t-c.start)/.3,0,1):cl((t-(c.start-.2))/.6,0,1);if(c.own){if(c.last)a*=cl((c.end-t)/.3,0,1)}else if(c!==DEMO&&c===segs[segs.length-1])a*=cl(total-t,0,1);g.globalAlpha=a;
 const Y=layout(c,Ld),L=Y.L,T=Y.T,sz=Y.sz,ts=Y.ts,lh=Y.lh,tl=Y.tl,bh=Y.bh,top=Math.max(Y.top0,(Ld?H*.53:H*.48)-bh/2)+S.yA*H;
 g.fillStyle=S.cA;g.font=sz+"px "+Y.fa;g.direction="rtl";g.shadowColor="rgba(255,225,160,.4)";g.shadowBlur=26;L.forEach((l,i)=>g.fillText(l,W/2,top+i*lh+sz));g.shadowBlur=0;
 const y=top+L.length*lh+6;g.fillStyle="rgba(255,210,122,.7)";rr(W/2-36,y,72,4,2);g.fill();
 g.direction="ltr";g.font="500 "+ts+"px "+Y.ft;g.fillStyle=S.cT;T.forEach((l,i)=>g.fillText(l,W/2,y+44+S.yT*H+i*tl));
-const mx=Ld?200:100,by=H-(Ld?48:128);g.globalAlpha=1;g.font="600 "+(Ld?20:22)+"px "+SF;g.fillStyle="rgba(255,255,255,.65)";g.fillText(qari()[1],W/2,H-(Ld?72:168));
+const mx=Ld?200:100,by=H-(Ld?48:128);g.globalAlpha=1;g.font="600 "+(Ld?20:22)+"px "+SF;g.fillStyle="rgba(255,255,255,.65)";{const qn=S.mode==="own"?S.oQ:qari()[1];if(qn)g.fillText(qn,W/2,H-(Ld?72:168))}
 g.fillStyle="rgba(255,255,255,.18)";rr(mx,by,W-2*mx,6,3);g.fill();g.fillStyle="#ffd27a";rr(mx,by,Math.max(6,(W-2*mx)*cl(t/(total||1),0,1)),6,3);g.fill()}
+
+/* ---------- video murotal sendiri ----------
+   Alur: unggah video (suara diambil dari video, atau pakai audio terpisah) -> tandai waktu mulai tiap ayat
+   (ketuk saat ayat dimulai, atau isi perkiraan, atau tempel waktu) -> teks Arab dan terjemahan tampil sesuai waktu itu.
+   Pratinjau dan ekspor memakai jam yang sama (detik ke-t), jadi hasil simpan = pratinjau. */
+const OWN_PRO_ONLY=true,TAP_LEAD=.15;/* ketukan manusia biasanya telat sekitar 0,15 detik, jadi dikurangi */
+const VE=()=>S.mode==="own"&&O.el?O.el:(M.on&&M.v&&M.el?M.el:null);
+function pv(){if(M.v&&M.el)M.el.pause();if(O.el)O.el.pause()}
+const curT=()=>playing?AC.currentTime-t0:off;
+const obuf=()=>O.abuf||O.vbuf;
+function t1(x){const q=Math.round(Math.max(0,x)*10),mn=Math.floor(q/600);return mn+":"+((q%600)/10).toFixed(1).padStart(4,"0")}
+function setMode(md){
+ if(md==="own"&&OWN_PRO_ONLY&&isTrial()){m("Video sendiri hanya untuk paket Pro.",1);openPro();md="qari"}
+ if(S.mode!==md){stopP();ready=false;off=0;syncing=false;S.mode=md}
+ uiMode();ownRender()}
+function uiMode(){const o=S.mode==="own";$("#pQari").hidden=o;$("#pLatar").hidden=o;$("#pOwn").hidden=!o;$("#sync").hidden=!o;
+ [...$("#src").children].forEach(b=>b.classList.toggle("on",b.dataset.s===S.mode));
+ $("#srcN").textContent=o?"Suara dan gambar diambil dari videomu. Aplikasi menambahkan teks Arab dan terjemahan Indonesia sesuai waktu yang kamu tandai.":"Suara qari dan teks diambil otomatis dari internet."}
+mkb("#src","chip","Suara qari bawaan",()=>setMode("qari"),{s:"qari"});
+mkb("#src","chip","Video murotal sendiri",()=>setMode("own"),{s:"own"});
+mkb("#oFit","chip","Isi layar (sisi dipotong)",()=>{S.oFit="cover";uiOpts()},{f:"cover"});
+mkb("#oFit","chip","Muat penuh (ada bar hitam)",()=>{S.oFit="contain";uiOpts()},{f:"contain"});
+function uiOpts(){[...$("#oFit").children].forEach(b=>b.classList.toggle("on",b.dataset.f===S.oFit))}
+$("#oDim").oninput=e=>{S.oDim=+e.target.value;$("#o_oDim").textContent=Math.round(S.oDim*100)+"%"};
+$("#oQ").oninput=e=>{S.oQ=e.target.value};
+uiOpts();uiMode();
+
+/* unggah video dan audio */
+function oInfo(){const d=O.el?t1(O.el.duration||0):"";
+ $("#oInfo").textContent=!O.el?"Belum ada video. Pakai MP4 (H.264 + AAC) agar paling aman. Maksimal 400 MB.":
+  "Video: "+O.name+" ("+d+"). Suara: "+(O.abuf?"dari file terpisah ("+O.aname+")":O.vbuf?"dari video ini":"belum terbaca, unggah audio terpisah")+".";
+ $("#oAud").textContent=O.abuf?"Hapus audio terpisah":"Audio terpisah (opsional)"}
+$("#oUp").onclick=()=>{if(OWN_PRO_ONLY&&isTrial()){m("Video sendiri hanya untuk paket Pro.",1);openPro();return}$("#fo").click()};
+$("#fo").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;
+ if(f.size>4e8){m("Ukuran video maksimal 400 MB.",1);return}
+ stopP();ready=false;off=0;syncing=false;m("Membuka video...");
+ const url=URL.createObjectURL(f),el=document.createElement("video");el.muted=true;el.loop=true;el.playsInline=true;el.preload="auto";
+ try{await new Promise((ok,no)=>{el.onloadeddata=()=>ok();el.onerror=()=>no(new Error("Video ini tidak bisa dibuka browser. Coba ekspor ulang sebagai MP4 (H.264)."));el.src=url})}
+ catch(err){URL.revokeObjectURL(url);m(err.message,1);return}
+ if(O.el)O.el.pause();if(O.url)URL.revokeObjectURL(O.url);
+ O.el=el;O.url=url;O.name=f.name;O.size=f.size;O.vbuf=null;
+ m("Membaca suara dari video...");
+ try{O.vbuf=await ac().decodeAudioData(await f.arrayBuffer())}catch(err){O.vbuf=null}
+ OM=[];ownRestore();oInfo();ownRender();
+ m(O.vbuf?"Video dipakai: "+f.name+". Sekarang tandai waktu tiap ayat di bawah pratinjau.":"Suara dari video ini tidak terbaca browser. Unggah audionya terpisah lewat tombol Audio terpisah.",!O.vbuf)};
+$("#oAud").onclick=()=>{if(O.abuf){O.abuf=null;O.aname="";ready=false;stopP();oInfo();tapUI();m("Audio terpisah dihapus.");return}$("#foa").click()};
+$("#foa").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;
+ if(f.size>3e8){m("Ukuran audio maksimal 300 MB.",1);return}
+ stopP();ready=false;m("Membaca audio...");
+ try{O.abuf=await ac().decodeAudioData(await f.arrayBuffer());O.aname=f.name;oInfo();tapUI();m("Audio dipakai: "+f.name)}
+ catch(err){m("File audio tidak bisa dibaca browser. Coba MP3, M4A, atau WAV.",1)}};
+
+/* menyiapkan (teks ayat + jam pemutaran) */
+const ownMissing=()=>O.rows.filter(r=>!OM.some(x=>x.n===r.num)).map(r=>r.num);
+async function prepOwn(needMarks=true){stopP();ready=false;busy(1);
+ try{const buf=obuf();
+  if(!O.el)throw new Error("Unggah video murotalmu dulu.");
+  if(!buf)throw new Error("Suara belum terbaca. Unggah audio terpisah.");
+  const n=+$("#sur").value,T=await getText(n),f=Math.max(1,Math.min(T.length,+$("#fr").value||1)),
+   t=Math.min(T.length,Math.max(f,+$("#to").value||f),isTrial()&&TRIAL_MAX_AYAT>0?f+TRIAL_MAX_AYAT-1:1e9);
+  $("#fr").value=f;$("#to").value=t;
+  O.rows=T.slice(f-1,t);O.map=new Map(O.rows.map(r=>[r.num,r]));
+  OM=OM.filter(x=>x.n===0||O.map.has(x.n));
+  if(needMarks){const miss=ownMissing();
+   if(miss.length===O.rows.length)throw new Error("Waktu ayat belum ditandai. Tekan Mulai tandai ayat di bawah pratinjau, atau pakai Isi perkiraan otomatis.");
+   if(miss.length)throw new Error("Ayat ini belum punya waktu: "+(miss.length>8?miss.slice(0,8).join(", ")+", dan "+(miss.length-8)+" lainnya":miss.join(", "))+". Lengkapi di daftar waktu, atau ubah rentang ayat.")}
+  segs=[{a:null,buf,start:0,dur:buf.duration}];total=buf.duration;$("#sk").max=total;off=0;ready=true;
+  m("Siap: ayat "+f+" sampai "+t+", durasi "+fmt(total)+".")}
+ catch(e){m(e.message||"Gagal menyiapkan.",1)}
+ busy(0);ownRender()}
+function ownCur(t){let i=-1;for(let k=0;k<OM.length;k++){if(OM[k].t<=t)i=k;else break}
+ if(i<0||OM[i].n===0)return null;const a=O.map.get(OM[i].n);if(!a)return null;
+ const nx=OM[i+1];return{a,start:OM[i].t,end:nx?nx.t:total,last:!nx||nx.n===0,own:true}}
+
+/* tandai waktu */
+function nextRow(){const last=OM.reduce((m2,x)=>Math.max(m2,x.n),0);return O.rows.find(r=>r.num>last)||null}
+function tapUI(){const ok=!!(O.el&&obuf()),has=OM.some(x=>x.n>0),nx=syncing?nextRow():null,b=$("#tapB");
+ b.disabled=!ok;
+ if(syncing){b.textContent=nx?"Ketuk saat ayat "+nx.num+" dimulai":"Semua ayat sudah ditandai";
+  $("#syS").textContent=nx?"Dengarkan bacaan. Ketuk tombol (atau tekan Spasi) tepat saat ayat berikutnya dimulai:":"Selesai. Putar ulang untuk mengecek, lalu rapikan di daftar waktu.";
+  $("#syW").textContent=nx?nx.ar.split(" ").slice(0,4).join(" "):""}
+ else{b.textContent=has?"Tandai ulang dari awal":"Mulai tandai ayat";
+  $("#syS").textContent=ok?"Putar videonya, lalu ketuk tiap kali qari mulai membaca ayat baru. Waktu bisa dirapikan di daftar waktu.":"Unggah video murotal dulu.";$("#syW").textContent=""}
+ $("#tapU").disabled=!OM.length;$("#tapG").disabled=!syncing;$("#tapD").disabled=!syncing}
+async function startSync(){await prepOwn(false);if(!ready)return;
+ if(OM.length&&!confirm("Waktu yang sudah ada akan diganti. Lanjut?"))return;
+ OM=[];syncing=true;ownRender();play(0)}
+function tap(){if(!syncing||!ready)return;const nx=nextRow();if(!nx){tapUI();return}
+ OM.push({n:nx.num,t:+Math.max(0,curT()-TAP_LEAD).toFixed(2)});ownRender();
+ if(!nextRow()){toast("Semua ayat sudah ditandai.");syncing=false;tapUI()}}
+const tb=$("#tapB");
+tb.addEventListener("pointerdown",e=>{if(syncing&&e.button===0){e.preventDefault();tb._f=true;setTimeout(()=>{tb._f=false},400);tap()}});
+tb.onclick=()=>{if(tb._f){tb._f=false;return}if(syncing)tap();else startSync()};
+$("#tapU").onclick=()=>{if(!OM.length)return;OM.sort((a,b)=>a.t-b.t);OM.pop();ownRender()};
+$("#tapG").onclick=()=>{if(syncing){OM.push({n:0,t:+Math.max(0,curT()-TAP_LEAD).toFixed(2)});ownRender()}};
+$("#tapD").onclick=()=>{syncing=false;stopP();tapUI()};
+document.addEventListener("keydown",e=>{if(!syncing||e.code!=="Space"||e.repeat)return;const g2=e.target&&e.target.tagName;
+ if(g2==="INPUT"||g2==="TEXTAREA"||g2==="SELECT"||g2==="BUTTON")return;e.preventDefault();tap()});
+
+/* daftar waktu (bisa digeser) */
+function ownSave(){try{if(!O.name)return;const k="ar-om:"+O.name+":"+O.size+":"+$("#sur").value;if(OM.length)localStorage.setItem(k,JSON.stringify(OM));else localStorage.removeItem(k)}catch(e){}}
+function ownRestore(){try{if(!O.name)return;const o=JSON.parse(localStorage.getItem("ar-om:"+O.name+":"+O.size+":"+$("#sur").value)||"[]");
+ if(Array.isArray(o))OM=o.filter(x=>x&&Number.isInteger(x.n)&&x.n>=0&&isFinite(x.t)&&x.t>=0).map(x=>({n:x.n,t:+x.t}))}catch(e){}}
+function ownRender(){const L=$("#oList");if(!L)return;OM.sort((a,b)=>a.t-b.t);L.textContent="";lastHi=-2;
+ if(!OM.length){const p=document.createElement("p");p.className="note";p.style.margin="0";p.textContent="Belum ada waktu ayat.";L.appendChild(p)}
+ OM.forEach((x,i)=>{const r=document.createElement("div");r.className="orow";r.dataset.i=i;
+  r.innerHTML='<span>'+(x.n?"Ayat "+x.n:"Kosong")+'</span><input type="number" step="0.1" min="0" value="'+x.t.toFixed(2)+'" aria-label="Detik mulai"><button type="button" data-a="m" aria-label="Mundur 0,1 detik">-</button><button type="button" data-a="p" aria-label="Maju 0,1 detik">+</button><button type="button" data-a="g" aria-label="Putar dari sini">&#9654;</button><button type="button" data-a="x" aria-label="Hapus">&times;</button>';
+  L.appendChild(r)});
+ const ta=$("#oTs");if(document.activeElement!==ta)ta.value=OM.map(x=>x.n+"="+x.t.toFixed(2)).join("\n");
+ ownSave();tapUI()}
+function ownHi(t){const L=$("#oList");let i=-1;for(let k=0;k<OM.length;k++){if(OM[k].t<=t)i=k;else break}if(i===lastHi)return;lastHi=i;
+ [...L.querySelectorAll(".orow")].forEach((r,k)=>r.classList.toggle("hi",k===i));
+ if(playing&&i>=0){const r=L.querySelectorAll(".orow")[i];if(r)L.scrollTop=Math.max(0,r.offsetTop-L.clientHeight/2)}}
+async function ownPlayAt(t){if(!ready)await prepOwn(false);if(ready)play(Math.max(0,t))}
+$("#oList").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const i=+b.closest(".orow").dataset.i,a=b.dataset.a,x=OM[i];if(!x)return;
+ if(a==="m"||a==="p"){x.t=Math.max(0,+(x.t+(a==="p"?.1:-.1)).toFixed(2));ownRender()}
+ else if(a==="x"){OM.splice(i,1);ownRender()}
+ else if(a==="g")ownPlayAt(x.t-.4)});
+$("#oList").addEventListener("change",e=>{const inp=e.target.closest("input");if(!inp)return;const i=+inp.closest(".orow").dataset.i,v=parseFloat(inp.value);
+ if(OM[i]&&isFinite(v)&&v>=0)OM[i].t=+v.toFixed(2);ownRender()});
+const shiftAll=d=>{OM.forEach(x=>x.t=Math.max(0,+(x.t+d).toFixed(2)));ownRender()};
+$("#oSm").onclick=()=>shiftAll(-.1);$("#oSp").onclick=()=>shiftAll(.1);
+$("#oClr").onclick=()=>{if(OM.length&&!confirm("Hapus semua waktu ayat?"))return;OM=[];syncing=false;ownRender()};
+$("#oEst").onclick=async()=>{await prepOwn(false);if(!ready)return;
+ if(OM.length&&!confirm("Waktu yang sudah ada akan diganti dengan perkiraan. Lanjut?"))return;
+ const Tt=segs[0].buf.duration*.97,w=O.rows.map(r=>strip(r.ar).replace(/\s/g,"").length+6),sum=w.reduce((a,b)=>a+b,0);let c=0;
+ OM=O.rows.map((r,i)=>{const o={n:r.num,t:+(c/sum*Tt).toFixed(2)};c+=w[i];return o});ownRender();
+ m("Waktu perkiraan terisi (dibagi menurut panjang ayat). Putar videonya, lalu rapikan dengan tombol - dan + atau tandai ulang.")};
+$("#oApply").onclick=()=>{const out=[];$("#oTs").value.split(/\r?\n/).forEach(l=>{const mm=/^\s*(\d+)\s*[=,;|\t ]\s*(?:(\d+):)?(\d+(?:[.,]\d+)?)\s*$/.exec(l);
+ if(mm)out.push({n:+mm[1],t:+((mm[2]?+mm[2]*60:0)+parseFloat(mm[3].replace(",","."))).toFixed(2)})});
+ if(!out.length){m("Format tidak dikenali. Tulis satu baris per ayat, contoh: 1=0.40",1);return}
+ OM=out;ready=false;ownRender();m(out.length+" waktu diterapkan.")};
+oInfo();ownRender();
 
 /* ---------- halaman dan login ---------- */
 const lm=(t,e)=>{$("#lm").textContent=t;$("#lm").classList.toggle("err",!!e)};
