@@ -259,7 +259,7 @@ input[type=color]{padding:4px 6px;cursor:pointer}
 <section class="sec" id="harga"><h2 class="t">Pilih paket</h2><p class="d">Mulai dari trial gratis, lanjut ke Pro kalau cocok. Bayar sekali, aktif selamanya.</p>
 <div class="plans">
 <div class="plan"><h3>Trial</h3><div class="pr">Gratis</div><ul><li><span class="tdays"></span> hari percobaan</li><li id="liAyat"><span class="tmaxw">Maksimal <span class="tmax"></span> ayat per video</span></li><li id="liVid"><span class="tvidw">Maksimal <span class="tvid"></span> video per hari</span></li><li>Semua surah, qari, dan latar</li><li class="no">Ada watermark di video</li></ul><a class="ghost btn" href="#daftar">Coba gratis</a></div>
-<div class="plan pro"><h3>Pro, sekali bayar</h3><div class="pr" id="price"></div><ul><li>Aktif selamanya, tanpa biaya bulanan</li><li>Video dan ayat tanpa batas</li><li>Tanpa watermark</li><li>Semua surah, qari, dan latar</li><li>Unggah gambar, video, dan logo sendiri</li></ul><a class="cta btn" href="#masuk" id="subBtn">Beli Pro</a></div></div></section>
+<div class="plan pro"><h3>Pro, sekali bayar</h3><div class="pr" id="price"></div><p class="note" id="priceNote" style="margin:-8px 0 14px" hidden></p><ul><li>Aktif selamanya, tanpa biaya bulanan</li><li>Video dan ayat tanpa batas</li><li>Tanpa watermark</li><li>Semua surah, qari, dan latar</li><li>Unggah gambar, video, dan logo sendiri</li></ul><a class="cta btn" href="#masuk" id="subBtn">Beli Pro</a></div></div></section>
 <section class="sec"><h2 class="t">Cara pakainya</h2><p class="d">Tiga langkah saja.</p>
 <div class="cards">
 <div class="card"><div class="n">1</div><h3>Daftar atau masuk</h3><p>Mulai dengan akun trial, atau masuk ke akun Pro-mu.</p></div>
@@ -293,6 +293,7 @@ input[type=color]{padding:4px 6px;cursor:pointer}
 <div class="adst" id="adS"></div>
 <section class="panel"><div class="chips" id="adTabs"><button class="chip on" data-t="req" type="button">Pengajuan Pro</button><button class="chip" data-t="usr" type="button">Pengguna</button></div>
 <div class="fld" style="margin:14px 0 0"><input id="adQ" type="search" placeholder="Cari email..." autocomplete="off"></div>
+<label style="display:flex;gap:10px;align-items:center;margin-top:14px;font-size:13.5px;font-weight:600;color:var(--mut)"><input type="checkbox" id="adPromo" style="width:auto;min-height:0;accent-color:var(--gold)"><span id="adPromoT">Tandai sebagai pembeli promo</span></label>
 <div class="adl" id="adList"></div><p class="msg" id="adM" role="status"></p></section>
 </div></div>
 <div id="vApp" hidden>
@@ -386,6 +387,15 @@ input[type=color]{padding:4px 6px;cursor:pointer}
 <button class="ghost" id="svCancel" type="button">Batalkan</button>
 <button class="ghost" id="svClose" type="button" hidden>Tutup</button>
 </div></div>
+<div class="ov" id="vPromo" hidden role="dialog" aria-modal="true" aria-labelledby="prT"><div class="mb">
+<button class="ghost pclose" id="prX" type="button" aria-label="Tutup">&times;</button>
+<span class="badge">Promo terbatas</span><h2 id="prT">Promo pembeli pertama</h2>
+<div class="pr"><s id="prOld" style="font-size:18px;color:var(--mut);font-weight:600"></s> <span id="prNow"></span> <small>/ sekali bayar</small></div>
+<ul><li class="ck">Aktif selamanya, bayar sekali</li><li class="ck">Video dan ayat tanpa batas</li><li class="ck">Tanpa watermark</li><li class="ck">Unggah gambar, video, dan logo sendiri</li></ul>
+<div class="pbar"><i id="prBar" style="width:100%"></i></div>
+<p class="ctr"><b id="prLeft"></b></p>
+<button class="cta" id="prGo" type="button">Ambil promo sekarang</button>
+<button class="ghost" id="prLater" type="button">Nanti saja</button></div></div>
 <div class="ov" id="vPay" hidden role="dialog" aria-modal="true" aria-labelledby="pt"><div class="mb">
 <button class="ghost pclose" id="payX" type="button" aria-label="Tutup">&times;</button>
 <span class="badge">Paket Pro</span><h2 id="pt">Upgrade ke Pro</h2>
@@ -407,7 +417,8 @@ const TH=[{n:"Malam",a:"#070b1f",b:"#1d2d66"},{n:"Fajar",a:"#1c1740",b:"#c8655f"
 const SUPABASE_URL="https://amktgzdvkuiachxwrcsi.supabase.co",SUPABASE_ANON_KEY="sb_publishable_dzsT6aE7JIY3-C9nR71Ldw_sbhjhnMD";
 /* Pengaturan paket */
 /* TRIAL_MAX_AYAT dan FREE_EXPORTS_PER_DAY: 0 = tanpa batas */
-const LOGO_PRO_ONLY=true,TRIAL_DAYS=2,TRIAL_MAX_AYAT=0,FREE_EXPORTS_PER_DAY=0,PRICE_TEXT="Rp 49.000 / sekali bayar",WA_NUMBER="6289633044451",ADMIN_EMAIL="aditya.rizal.752@gmail.com";
+const LOGO_PRO_ONLY=true,TRIAL_DAYS=2,TRIAL_MAX_AYAT=0,FREE_EXPORTS_PER_DAY=0,PRICE_BASE="Rp 49.000 / sekali bayar",WA_NUMBER="6289633044451",ADMIN_EMAIL="aditya.rizal.752@gmail.com";
+let PRICE_TEXT=PRICE_BASE;
 const CONTACT_URL=WA_NUMBER?"https://wa.me/"+WA_NUMBER:"";/* WA_NUMBER contoh: "6281234567890". PAY_INFO contoh: "Transfer BCA 123456 a.n. Nama, atau QRIS" *//* contoh CONTACT_URL: "https://wa.me/628xxxxxxxxxx" */
 const sb=SUPABASE_URL&&SUPABASE_ANON_KEY&&window.supabase?window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY):null;
 const hashAuth=/access_token=/.test(location.hash),isRecovery=/type=recovery/.test(location.hash),isSignup=/type=signup/.test(location.hash),authErr=(/error_description=([^&]+)/.exec(location.search+location.hash)||[])[1];
@@ -727,20 +738,20 @@ if(!res.ok)throw new Error(j.error||("Server membalas "+res.status));return j}
 let adU=[],adR=[],adT="req";
 const adF=n=>Number(n||0).toLocaleString("id-ID");
 const adD=s=>s?new Date(s).toLocaleString("id-ID",{day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}):"-";
-function adStats(s){const it=[["Total viewers",s.views],["Viewers unik",s.unique],["Viewers hari ini",s.today],["Total pendaftar",s.users],["Daftar 7 hari terakhir",s.new7],["Pro aktif",s.pro],["Trial aktif",s.trial],["Berakhir",s.expired],["Pengajuan menunggu",s.pending]];
-$("#adS").innerHTML=it.map(i=>'<div class="st"><span>'+i[0]+'</span><b>'+(i[1]==null?"-":adF(i[1]))+'</b></div>').join("")}
+function adStats(s){const it=[["Total viewers",s.views],["Viewers unik",s.unique],["Viewers hari ini",s.today],["Total pendaftar",s.users],["Daftar 7 hari terakhir",s.new7],["Pro aktif",s.pro],["Trial aktif",s.trial],["Berakhir",s.expired],["Pengajuan menunggu",s.pending],["Slot promo terpakai",s.promo==null?null:s.promo+" / "+s.quota]];
+$("#adS").innerHTML=it.map(i=>'<div class="st"><span>'+i[0]+'</span><b>'+(i[1]==null?"-":typeof i[1]==="string"?i[1]:adF(i[1]))+'</b></div>').join("")}
 function adRender(){const q=$("#adQ").value.trim().toLowerCase(),box=$("#adList");let h="";
 if(adT==="req"){const rows=[...adR].filter(r=>!q||(r.email||"").toLowerCase().includes(q)).sort((a,b)=>(a.status==="pending"?0:1)-(b.status==="pending"?0:1));
 h=rows.map(r=>{const st=r.status,bd=st==="pending"?'<span class="bg">Menunggu</span>':st==="approved"?'<span class="bg ok">Disetujui</span>':'<span class="bg no">Ditolak</span>';
 const btn=st==="pending"?'<div class="bt"><button class="cta" data-a="approve" data-u="'+esc(r.user_id)+'" data-r="'+esc(r.id)+'" data-e="'+esc(r.email)+'" type="button">Setujui</button><button class="ghost" data-a="reject" data-r="'+esc(r.id)+'" data-e="'+esc(r.email)+'" type="button">Tolak</button></div>':"";
 return '<div class="adr"><div class="ti"><b>'+esc(r.email)+'</b><small>Diajukan '+adD(r.created_at)+'</small></div>'+bd+btn+'</div>'}).join("")||'<p class="empty">Belum ada pengajuan.</p>'}
 else{const rows=adU.filter(u=>!q||(u.email||"").toLowerCase().includes(q));
-h=rows.map(u=>{const pl=u.plan,bd=pl==="pro"?'<span class="bg pro">Pro</span>':pl==="trial"?'<span class="bg">Trial</span>':'<span class="bg no">Berakhir</span>';
+h=rows.map(u=>{const pl=u.plan,bd=pl==="pro"?'<span class="bg pro">Pro'+(u.promo?" Promo":"")+'</span>':pl==="trial"?'<span class="bg">Trial</span>':'<span class="bg no">Berakhir</span>';
 const btn=pl==="pro"?'<button class="ghost" data-a="revoke" data-u="'+esc(u.id)+'" data-e="'+esc(u.email)+'" type="button">Cabut Pro</button>':'<button class="cta" data-a="grant" data-u="'+esc(u.id)+'" data-e="'+esc(u.email)+'" type="button">Jadikan Pro</button>';
 return '<div class="adr"><div class="ti"><b>'+esc(u.email)+'</b><small>Daftar '+adD(u.created_at)+' | login terakhir '+adD(u.last_sign_in_at)+'</small></div>'+bd+'<div class="bt">'+btn+'</div></div>'}).join("")||'<p class="empty">Tidak ada pengguna.</p>'}
 box.innerHTML=h}
 async function adLoad(){const mm=$("#adM");mm.textContent="Memuat data...";mm.classList.remove("err");
-try{const j=await adApi({action:"overview"});adU=j.users||[];adR=j.requests||[];const s=j.stats||{};adStats(s);
+try{const j=await adApi({action:"overview"});adU=j.users||[];adR=j.requests||[];const s=j.stats||{};adStats(s);{const pc=$("#adPromo"),full=s.promo>=s.quota;pc.checked=!full;pc.disabled=full;$("#adPromoT").textContent=full?"Slot promo habis ("+s.promo+" / "+s.quota+")":"Tandai sebagai pembeli promo Rp 20.000 (sisa "+(s.quota-s.promo)+" slot)"}
 document.querySelector('#adTabs [data-t="req"]').textContent="Pengajuan Pro"+(s.pending?" ("+s.pending+")":"");document.querySelector('#adTabs [data-t="usr"]').textContent="Pengguna ("+adU.length+")";
 adRender();mm.textContent=(s.views==null?"Catatan: data viewers belum aktif, jalankan file SQL di Supabase. ":"")+"Diperbarui "+new Date().toLocaleTimeString("id-ID")}
 catch(e){mm.textContent=e.message+(/404/.test(e.message)?" (file api/admin.js belum ter-deploy)":"");mm.classList.add("err")}}
@@ -750,7 +761,27 @@ $("#adRf").onclick=adLoad;$("#adBack").onclick=()=>{location.hash="#app"};$("#ad
 $("#mAdmin").onclick=()=>{closeMenu();location.hash="#admin"};
 $("#adList").onclick=async e=>{const b=e.target.closest("button[data-a]");if(!b)return;const a=b.dataset.a,L={approve:"Setujui Pro untuk ",reject:"Tolak pengajuan dari ",grant:"Jadikan Pro: ",revoke:"Cabut Pro dari "};
 if(!confirm(L[a]+(b.dataset.e||"")+"?"))return;b.disabled=true;
-try{await adApi({action:a,user_id:b.dataset.u,request_id:b.dataset.r});toast("Berhasil.");await adLoad()}catch(x){toast(x.message,1);b.disabled=false}};
+try{await adApi({action:a,user_id:b.dataset.u,request_id:b.dataset.r,promo:$("#adPromo").checked});toast("Berhasil.");await adLoad()}catch(x){toast(x.message,1);b.disabled=false}};
+/* ---------- promo pembeli pertama ---------- */
+const PROMO={on:false,left:0,quota:0,price:"Rp 20.000 / sekali bayar",base:PRICE_BASE.split(" /")[0]};
+function applyPrice(){const pe=$("#price");pe.innerHTML=PROMO.on?'<s style="font-size:16px;color:var(--mut);font-weight:600">'+PROMO.base+'</s> '+PRICE_TEXT:PRICE_TEXT;
+const pn=$("#priceNote");pn.hidden=!PROMO.on;if(PROMO.on)pn.textContent="Promo "+PROMO.quota+" pembeli pertama. Sisa "+PROMO.left+" slot.";
+$("#xc").textContent="Beli Pro, "+PRICE_TEXT.split(" /")[0];
+if(CONTACT_URL)$("#waFab").setAttribute("href",CONTACT_URL+"?text="+encodeURIComponent("Halo admin Ayat Reels, saya mau order paket Pro ("+PRICE_TEXT+"). Mohon info cara pembayarannya."))}
+const prE=$("#vPromo");
+function promoClose(){prE.hidden=true}
+function promoShow(){try{if(sessionStorage.getItem("ar-pr"))return;sessionStorage.setItem("ar-pr","1")}catch(e){}
+if(!PROMO.on||view==="login"||view==="reset"||view==="admin"||plan().t==="pro"||isAdmin())return;
+$("#prT").textContent=PROMO.quota+" pembeli pertama, Pro cuma "+PROMO.price.split(" /")[0];
+$("#prOld").textContent=PROMO.base;$("#prNow").textContent=PROMO.price.split(" /")[0];
+$("#prLeft").textContent="Sisa "+PROMO.left+" dari "+PROMO.quota+" slot";
+$("#prBar").style.width=Math.max(4,Math.round(PROMO.left/PROMO.quota*100))+"%";prE.hidden=false}
+$("#prX").onclick=$("#prLater").onclick=promoClose;prE.onclick=e=>{if(e.target===prE)promoClose()};
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!prE.hidden)promoClose()});
+$("#prGo").onclick=()=>{promoClose();if(user){openPro();return}
+if(CONTACT_URL)window.open(CONTACT_URL+"?text="+encodeURIComponent("Halo admin Ayat Reels, saya mau ambil promo "+PROMO.quota+" pembeli pertama Pro ("+PROMO.price+"). Mohon info cara pembayarannya."),"_blank","noopener");else location.hash="#daftar"};
+(async function(){try{const r=await fetch("/api/promo");if(!r.ok)return;const j=await r.json();
+if(j&&j.quota>0&&j.left>0){PROMO.quota=j.quota;PROMO.left=j.left;PROMO.on=true;PRICE_TEXT=PROMO.price;applyPrice();renderAcc();setTimeout(promoShow,1500)}}catch(e){}})();
 /* notifikasi cek email setelah daftar */
 const ml=$("#vMail");let mlTimer=0,mlEmail="";
 const mlMsg=(t,e)=>{$("#mlM").textContent=t;$("#mlM").classList.toggle("err",!!e)};
