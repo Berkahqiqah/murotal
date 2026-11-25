@@ -5,6 +5,7 @@ const ANON = process.env.SUPABASE_ANON_KEY || "sb_publishable_dzsT6aE7JIY3-C9nR7
 const SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
 const ADMIN = (process.env.ADMIN_EMAIL || "aditya.rizal.752@gmail.com").toLowerCase();
 const TRIAL_DAYS = Number(process.env.TRIAL_DAYS || 2);
+const QUOTA = Number(process.env.PROMO_QUOTA || 10);
 const DAY = 864e5;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -86,27 +87,33 @@ module.exports = async (req, res) => {
       let vs = {};
       try { const v = await rest("rpc/visit_stats", { method: "POST", body: "{}" }); if (v.ok) vs = await v.json(); } catch (e) {}
       const rows = users.map(u => ({
-        id: u.id, email: u.email, created_at: u.created_at, last_sign_in_at: u.last_sign_in_at, plan: planOf(u)
+        id: u.id, email: u.email, created_at: u.created_at, last_sign_in_at: u.last_sign_in_at, plan: planOf(u),
+        promo: (u.app_metadata || {}).promo === "early" && planOf(u) === "pro"
       })).sort((a, c) => new Date(c.created_at) - new Date(a.created_at));
       const cnt = k => rows.filter(u => u.plan === k).length;
       const stats = {
         views: vs.views == null ? null : vs.views, unique: vs.unique == null ? null : vs.unique, today: vs.today == null ? null : vs.today,
         users: rows.length, new7: rows.filter(u => Date.now() - new Date(u.created_at) < 7 * DAY).length,
         pro: cnt("pro"), trial: cnt("trial"), expired: cnt("expired"),
-        pending: requests.filter(r => r.status === "pending").length
+        pending: requests.filter(r => r.status === "pending").length,
+        promo: rows.filter(u => u.promo).length, quota: QUOTA
       };
       return out(200, { stats, users: rows, requests });
     }
 
     if (b.action === "approve" || b.action === "grant") {
       if (!UUID.test(uid || "")) return out(400, { error: "user_id tidak valid." });
-      await setPlan(uid, { plan: "pro", pro_until: null });
+      if (b.promo) {
+        const sold = (await listUsers()).filter(u => (u.app_metadata || {}).promo === "early" && planOf(u) === "pro").length;
+        if (sold >= QUOTA) return out(409, { error: "Slot promo sudah habis. Hilangkan centang promo lalu coba lagi." });
+      }
+      await setPlan(uid, { plan: "pro", pro_until: null, promo: b.promo ? "early" : null });
       await markRequests("user_id=eq." + uid + "&status=eq.pending", "approved");
       return out(200, { ok: true });
     }
     if (b.action === "revoke") {
       if (!UUID.test(uid || "")) return out(400, { error: "user_id tidak valid." });
-      await setPlan(uid, { plan: "free", pro_until: null });
+      await setPlan(uid, { plan: "free", pro_until: null, promo: null });
       return out(200, { ok: true });
     }
     if (b.action === "reject") {
