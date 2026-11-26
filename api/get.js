@@ -1,4 +1,4 @@
-const OK = ["cdn.islamic.network", "everyayah.com", "api.alquran.cloud", "api.quran.com", "verses.quran.com"];
+const OK = ["cdn.islamic.network", "everyayah.com", "api.alquran.cloud", "api.quran.com", "verses.quran.com", "qtt.web.id"];
 
 module.exports = async (req, res) => {
   try {
