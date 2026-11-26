@@ -249,6 +249,21 @@ textarea{width:100%;font:inherit;font-weight:600;font-size:13px;color:var(--ink)
 .syn .syw{font-family:'Amiri Quran','Amiri',serif;font-size:22px;line-height:1.7;margin:0 0 10px;text-align:center;min-height:0}
 .tapb{width:100%;min-height:68px;font-size:17px;margin-bottom:10px;touch-action:manipulation;user-select:none;-webkit-user-select:none}
 .syn .act .ghost{flex:1 1 90px;min-height:40px;padding:8px 10px;font-size:13px}
+
+/* ---- ayat pilihan + gaya reel ---- */
+.pick{border-style:dashed}
+.pick h2{color:var(--goldtxt);font-size:14px;margin-bottom:12px}
+.pkb{width:100%;margin-top:14px;display:flex;align-items:center;justify-content:center;gap:10px}
+.pkb svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.pkt{width:100%;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:14.5px}
+.pkt svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s}
+.pkt[aria-expanded="true"] svg{transform:rotate(180deg)}
+.pkl{margin-top:10px;max-height:300px;overflow:auto;border:1px solid var(--line);border-radius:16px;background:var(--sub)}
+.pkr{display:flex;width:100%;justify-content:space-between;align-items:center;gap:12px;text-align:left;border:0;border-bottom:1px solid var(--line);background:none;padding:13px 14px;font-weight:600;font-size:14px;line-height:1.3}
+.pkr:last-child{border-bottom:0}
+.pkr small{color:var(--mut);font-weight:600;font-size:12.5px;white-space:nowrap}
+.pkr.on{background:rgba(255,210,122,.1);box-shadow:inset 0 0 0 1px var(--gold)}
+#pReel .lbl{margin:16px 0 8px}
 </style></head><body>
 <div class="aura"></div>
 <div id="vLand"><div class="w">
@@ -330,6 +345,12 @@ textarea{width:100%;font:inherit;font-weight:600;font-size:13px;color:var(--ink)
 </div></div></div></header>
 <div class="grid"><div class="col">
 <section class="panel"><h2>Sumber suara dan video</h2><div class="chips" id="src"></div><p class="note" style="margin-top:12px" id="srcN"></p></section>
+<section class="panel pick" id="pPick"><h2>Ayat acak pilihan</h2>
+<div class="chips" id="pkc"></div>
+<button class="cta pkb" id="pkGo" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><circle cx="8.5" cy="8.5" r=".9" fill="currentColor"/><circle cx="15.5" cy="8.5" r=".9" fill="currentColor"/><circle cx="8.5" cy="15.5" r=".9" fill="currentColor"/><circle cx="15.5" cy="15.5" r=".9" fill="currentColor"/></svg>Acak ayat</button>
+<button class="ghost pkt" id="pkTg" type="button" aria-expanded="false" aria-controls="pkL"><span id="pkTt"></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg></button>
+<div class="pkl" id="pkL" hidden></div>
+<p class="note" style="margin-top:12px">Diambil dari ayat-ayat nasihat &amp; doa pilihan yang utuh maknanya, bukan acak dari seluruh mushaf, agar tidak keluar dari konteks.</p></section>
 <section class="panel"><h2>Surah dan ayat</h2>
 <label for="sur">Surah</label><select id="sur"></select>
 <div class="two"><div><label for="fr">Dari ayat</label><input id="fr" type="number" min="1" value="1"></div>
@@ -351,6 +372,14 @@ textarea{width:100%;font:inherit;font-weight:600;font-size:13px;color:var(--ink)
 </section>
 <section class="panel" id="pQari"><h2>Suara qari</h2><div class="qg" id="qs"></div></section>
 <section class="panel"><h2>Format video</h2><div class="chips" id="ars"></div><p class="note" style="margin-top:12px">Berlaku untuk pratinjau dan video yang disimpan. Hasil simpan berformat MP4.</p></section>
+<section class="panel" id="pReel"><h2>Gaya reel</h2>
+<div class="chips" id="rfm"></div>
+<p class="note" style="margin-top:12px" id="rfN"></p>
+<div id="rfx" hidden>
+<label class="lbl">Cara kata muncul</label><div class="chips" id="rfk"></div>
+<div class="rg"><label for="rfw">Kata per frasa</label><input type="range" id="rfw" min="2" max="6" step="1"><output id="o_rfw"></output></div>
+<div class="rg"><label for="rfo">Geser waktu</label><input type="range" id="rfo" min="-0.5" max="0.5" step="0.05"><output id="o_rfo"></output></div>
+<p class="note" style="margin-top:12px">Waktu kata diperkirakan dari panjang kata dan jeda di dalam suara. Kalau teks terasa terlalu cepat atau lambat dari bacaan, geser waktunya. Pratinjau gaya ini tampil setelah kamu menekan Buat video.</p></div></section>
 <section class="panel" id="pLatar"><h2>Latar video</h2><div class="sws" id="ths"></div>
 <div class="mrow" id="mc" hidden><label for="dim">Gelapkan latar</label><input type="range" id="dim" min="0" max="0.8" step="0.05" value="0.35"><button class="ghost" id="chg">Ganti</button><button class="ghost" id="rm">Hapus</button></div>
 <input type="file" id="fm" accept="image/*,video/*" hidden>
@@ -496,18 +525,18 @@ $("#sur").addEventListener("change",fillAyat);
 /* ---------- tampilan teks dan logo ---------- */
 const AFN=[["Amiri Quran","Amiri Quran (bawaan)"],["Amiri","Amiri"],["Scheherazade New","Scheherazade New"],["Noto Naskh Arabic","Noto Naskh Arabic"],["Lateef","Lateef"]],TFN=[["Plus Jakarta Sans","Plus Jakarta Sans (bawaan)"],["Poppins","Poppins"],["Inter","Inter"],["Montserrat","Montserrat"],["Nunito","Nunito"],["Lora","Lora (serif)"]];
 AFN.forEach(f=>$("#fA").add(new Option(f[1],f[0])));TFN.forEach(f=>$("#fT").add(new Option(f[1],f[0])));
-const SD={fA:"Amiri Quran",fT:"Plus Jakarta Sans",sA:1,sT:1,yA:0,yT:0,cA:"#ffffff",cT:"#eeeeee",lgP:5,lgS:18,lgO:1},LG={c:null,name:""};
+const SD={fA:"Amiri Quran",fT:"Plus Jakarta Sans",sA:1,sT:1,yA:0,yT:0,cA:"#ffffff",cT:"#eeeeee",lgP:5,lgS:18,lgO:1,rf:"full",rfk:1,rfw:4,rfo:0},LG={c:null,name:""};
 let fv=0,LK="",LV=null;
 Object.assign(S,SD);
 try{const o=JSON.parse(localStorage.getItem("ar-style")||"{}");for(const k in SD)if(typeof o[k]===typeof SD[k])S[k]=o[k]}catch(e){}
 const cp=(x,a,b)=>Math.max(a,Math.min(b,x));
 if(!AFN.some(f=>f[0]===S.fA))S.fA=SD.fA;if(!TFN.some(f=>f[0]===S.fT))S.fT=SD.fT;
 ["cA","cT"].forEach(k=>{if(!/^#[0-9a-f]{6}$/i.test(S[k]))S[k]=SD[k]});
-S.sA=cp(S.sA,.6,1.6);S.sT=cp(S.sT,.6,1.8);S.yA=cp(S.yA,-.3,.3);S.yT=cp(S.yT,-.2,.3);S.lgS=cp(S.lgS,5,50);S.lgO=cp(S.lgO,.2,1);S.lgP=cp(Math.round(S.lgP),0,5);
+S.sA=cp(S.sA,.6,1.6);S.sT=cp(S.sT,.6,1.8);S.yA=cp(S.yA,-.3,.3);S.yT=cp(S.yT,-.2,.3);S.lgS=cp(S.lgS,5,50);S.lgO=cp(S.lgO,.2,1);S.lgP=cp(Math.round(S.lgP),0,5);if(S.rf!=="frasa")S.rf="full";S.rfk=S.rfk?1:0;S.rfw=cp(Math.round(S.rfw),2,6);S.rfo=cp(S.rfo,-.5,.5);
 const ldFonts=()=>Promise.all([document.fonts.load('64px "'+S.fA+'"',"\u0628\u0633\u0645"),document.fonts.load('500 26px "'+S.fT+'"',"Abc")]).then(()=>{fv++}).catch(()=>{});
 if(document.fonts.addEventListener)document.fonts.addEventListener("loadingdone",()=>{fv++});
 const pos=v=>v===0?"semula":(v<0?"naik ":"turun ")+Math.round(Math.abs(v)*100)+"%";
-const rgs=[["sA",v=>Math.round(v*100)+"%"],["sT",v=>Math.round(v*100)+"%"],["yA",pos],["yT",pos],["lgS",v=>v+"%"],["lgO",v=>Math.round(v*100)+"%"]];
+const rgs=[["sA",v=>Math.round(v*100)+"%"],["sT",v=>Math.round(v*100)+"%"],["yA",pos],["yT",pos],["lgS",v=>v+"%"],["lgO",v=>Math.round(v*100)+"%"],["rfw",v=>v+" kata"],["rfo",v=>v===0?"pas":(v>0?"+":"")+v.toFixed(2)+" dtk"]];
 const LGP=["Kiri atas","Tengah atas","Kanan atas","Kiri bawah","Tengah bawah","Kanan bawah"];
 LGP.forEach((n,i)=>mkb("#lgp","chip",n,()=>{S.lgP=i;svStyle();lgUI()},{p:i}));
 function lgUI(){$("#lgc").hidden=!LG.c;$("#lgRm").hidden=!LG.c;$("#lgUp").textContent=LG.c?"Ganti logo":"Unggah logo";[...$("#lgp").children].forEach(b=>b.classList.toggle("on",+b.dataset.p===S.lgP))}
@@ -653,17 +682,117 @@ for(let k=0;k<90;k++){lh=sz*1.9;L=wrap(ar,sz+"px "+fa,"rtl",mw);T=wrap(c.a.id,"5
 LK=key;return LV={L,T,sz,ts,lh,tl,bh,fa,ft,top0}}
 function drawLogo(){if(!LG.c)return;const base=Math.min(W,H),w0=LG.c.width,h0=LG.c.height,Ld=W>H;let w=base*S.lgS/100,h=w*h0/w0;const mh=base*.5;if(h>mh){h=mh;w=h*w0/h0}
 const col=S.lgP%3,mx=Ld?28:36,x=col===0?mx:col===1?(W-w)/2:W-w-mx,y=S.lgP<3?(Ld?24:40):H-h-(Ld?92:205);g.save();g.globalAlpha=S.lgO;g.drawImage(LG.c,x,y,w,h);g.restore()}
+
+/* ---------- ayat pilihan (doa nabi, sabar, tawakal, dll) ---------- */
+const PN={2:"Al-Baqarah",3:"Āli ‘Imrān",5:"Al-Mā’idah",7:"Al-A‘rāf",9:"At-Taubah",12:"Yūsuf",13:"Ar-Ra‘d",14:"Ibrāhīm",15:"Al-Ḥijr",16:"An-Naḥl",17:"Al-Isrā’",18:"Al-Kahfi",20:"Ṭāhā",21:"Al-Anbiyā’",23:"Al-Mu’minūn",25:"Al-Furqān",27:"An-Naml",28:"Al-Qaṣaṣ",29:"Al-‘Ankabūt",30:"Ar-Rūm",31:"Luqmān",33:"Al-Aḥzāb",35:"Fāṭir",39:"Az-Zumar",42:"Asy-Syūrā",49:"Al-Ḥujurāt",51:"Aż-Żāriyāt",55:"Ar-Raḥmān",57:"Al-Ḥadīd",59:"Al-Ḥasyr",65:"Aṭ-Ṭalāq",66:"At-Taḥrīm",67:"Al-Mulk",71:"Nūḥ",87:"Al-A‘lā",93:"Aḍ-Ḍuḥā",94:"Al-Insyirāḥ",99:"Az-Zalzalah",103:"Al-‘Aṣr"};
+const PKC=[["all","Semua"],["d","Doa"],["s","Sabar & ujian"],["h","Harapan & ampunan"],["z","Syukur & zikir"],["t","Tawakal"],["a","Akhlak & keluarga"],["i","Ibadah & akhirat"]];
+const PKD=("d|Doa Nabi Adam|7|23;d|Doa Nabi Ibrahim|14|40|41;d|Doa Nabi Musa melapangkan dada|20|25|28;d|Doa Nabi Musa saat butuh pertolongan|28|24;d|Doa Nabi Yunus dalam kesempitan|21|87;d|Doa Nabi Ayyub|21|83;d|Doa Nabi Zakariya|21|89;d|Doa Nabi Nuh|71|28;d|Doa Nabi Sulaiman bersyukur|27|19;d|Doa Nabi Yusuf|12|101;d|Doa sapu jagat|2|201;d|Doa Ashabul Kahfi|18|10;d|Doa untuk orang tua|17|24;d|Doa untuk pasangan & anak|25|74;d|Doa menambah ilmu|20|114;d|Doa memohon ampun & rahmat|23|118;d|Doa agar hati tetap lurus|3|8;d|Doa untuk sesama mukmin|59|10;d|Doa memohon kesabaran|2|250;d|Doa memulai dan mengakhiri dengan benar|17|80;"
++"s|Mohon pertolongan dengan sabar & shalat|2|153;s|Ujian dan kabar gembira|2|155|156;s|Beban sesuai kemampuan|2|286;s|Bersama kesulitan ada kemudahan|94|5|6;s|Pahala orang yang sabar|39|10;s|Jangan lemah dan jangan bersedih|3|139;s|Iman pasti diuji|29|2;s|Bersabarlah dan teguhkan hati|3|200;"
++"h|Jangan putus asa dari rahmat Allah|39|53;h|Jangan berputus asa dari pertolongan Allah|12|87;h|Hanya orang sesat yang putus asa|15|56;h|Tuhanmu tidak meninggalkanmu|93|3|5;h|Allah menerima tobat hamba-Nya|42|25;"
++"z|Syukur menambah nikmat|14|7;z|Hati tenang dengan zikir|13|28;z|Ingatlah Aku, Aku ingat kamu|2|152;z|Berzikir sebanyak-banyaknya|33|41|42;z|Nikmat Allah tak terhitung|16|18;z|Zikir saat berdiri, duduk, berbaring|3|191;z|Nikmat Tuhan yang mana didustakan|55|13;"
++"t|Takwa membuka jalan keluar|65|2|3;t|Bertawakal setelah bertekad|3|159;t|Cukuplah Allah penolong kami|3|173;t|Tidak ada musibah kecuali telah ditetapkan|9|51;t|Cukuplah Allah bagiku|9|129;t|Bukankah Allah cukup bagi hamba-Nya|39|36;"
++"a|Berbakti kepada orang tua|17|23;a|Nasihat Luqman kepada anaknya|31|18|19;a|Yang paling mulia adalah yang paling bertakwa|49|13;a|Orang mukmin itu bersaudara|49|10;a|Ketenteraman dalam pasangan|30|21;a|Berlaku adil dan berbuat baik|16|90;a|Hamba Ar-Rahman berjalan rendah hati|25|63;a|Jagalah diri dan keluarga dari api neraka|66|6;a|Tolong-menolong dalam kebaikan|5|2;"
++"i|Semua kembali kepada Allah|29|57;i|Harta & anak perhiasan dunia|18|46;i|Akhirat lebih baik & kekal|87|16|17;i|Bersegera menuju ampunan|3|133;i|Akhirat kehidupan sebenarnya|29|64;i|Dunia hanya permainan|57|20;i|Janji Allah pasti benar|35|5;i|Tujuan penciptaan|51|56;i|Persiapan untuk hari esok|59|18;i|Demi waktu, manusia merugi|103|1|3;i|Amal sekecil zarah dihitung|99|7|8;i|Hidup untuk menguji amal terbaik|67|2").split(";").map(x=>{const p=x.split("|"),f=+p[3],t=+(p[4]||p[3]);return{c:p[0],n:p[1],s:+p[2],f,t,l:PN[+p[2]]+" "+p[2]+":"+f+(t>f?"–"+t:"")}});
+const PK={cat:"all",cur:-1,open:false,busy:false};
+PKC.forEach(c=>mkb("#pkc","chip",c[1],()=>{PK.cat=c[0];pkUI()},{c:c[0]}));
+const pkIdx=()=>PKD.map((x,i)=>i).filter(i=>PK.cat==="all"||PKD[i].c===PK.cat);
+function pkUI(){[...$("#pkc").children].forEach(b=>b.classList.toggle("on",b.dataset.c===PK.cat));
+ const ix=pkIdx(),L=$("#pkL");$("#pkTt").textContent="Pilih dari daftar · "+ix.length+" ayat";$("#pkTg").setAttribute("aria-expanded",PK.open?"true":"false");L.hidden=!PK.open;L.textContent="";
+ if(PK.open)ix.forEach(i=>{const it=PKD[i],b=document.createElement("button");b.type="button";b.className="pkr"+(i===PK.cur?" on":"");b.innerHTML="<span></span><small></small>";b.firstChild.textContent=it.n;b.lastChild.textContent=it.l;b.onclick=()=>pkPick(i);L.appendChild(b)})}
+async function pkPick(i){const it=PKD[i];if(!it)return;if(PK.busy)return;if(expOn){m("Tunggu penyimpanan video selesai dulu.",1);return}
+ PK.busy=true;PK.cur=i;
+ try{const ch=+$("#sur").value!==it.s;$("#sur").value=it.s;fillAyat();$("#fr").value=it.f;$("#to").value=it.t;ayDirty=true;clampAyat();ayHint();
+  ready=false;stopP();off=0;syncing=false;if(ch){OM=[];ownRestore()}ownRender();pkUI();
+  m("Dipilih: "+it.n+" ("+it.l+"). Menyiapkan...");
+  if(matchMedia("(max-width:919px)").matches){const ph=$(".phone");if(ph)ph.scrollIntoView({behavior:"smooth",block:"center"})}
+  await prep();if(ready)play(0)}
+ finally{PK.busy=false}}
+$("#pkGo").onclick=()=>{const ix=pkIdx();if(!ix.length)return;const pool=ix.length>1?ix.filter(i=>i!==PK.cur):ix;pkPick(pool[Math.floor(Math.random()*pool.length)])};
+$("#pkTg").onclick=()=>{PK.open=!PK.open;pkUI()};
+pkUI();
+
+/* ---------- gaya reel: ayat per frasa, kata demi kata ----------
+   Waktu kata tidak tersedia dari sumber audio, jadi diperkirakan:
+   1) bagi ayat jadi frasa (di tanda waqaf, lalu maksimal N kata),
+   2) bagi durasi bacaan sesuai bobot huruf/harakat tiap kata,
+   3) geser tiap batas ke titik paling sepi di sekitarnya (jeda napas qari).
+   Terjemahan dipotong mengikuti proporsi frasa, lebih disukai di tanda baca. */
+const RC=new Map(),RSTOP=/[\u06D6\u06D7\u06D8\u06DA\u06DB\u06DC]/,RLET=/[\u0621-\u063A\u0641-\u064A\u0671]/;
+const reelOn=()=>S.rf==="frasa";
+function rWt(w){const b=w.replace(/[\u06D6-\u06DC\s]/g,""),L=(b.match(/[\u0621-\u063A\u0641-\u064A\u0671]/g)||[]).length,d=(b.match(/\u0670/g)||[]).length,M=(b.match(/\u0653/g)||[]).length,sh=(b.match(/\u0651/g)||[]).length;return Math.max(2,L+1.5*d+2*M+.5*sh)}
+function rWords(ar){const o=[];ar.split(/\s+/).filter(Boolean).forEach(tok=>{const st=RSTOP.test(tok);
+ if(!RLET.test(tok)){if(o.length){o[o.length-1].t+=" "+tok;o[o.length-1].stop=o[o.length-1].stop||st}return}
+ o.push({t:tok,w:rWt(tok),stop:st})});return o}
+function rSplit(ws,mx){const bl=[];let cur=[];ws.forEach(w=>{cur.push(w);if(w.stop){bl.push(cur);cur=[]}});if(cur.length)bl.push(cur);
+ let i=0;while(i<bl.length){const b=bl[i];if(b.length<2&&bl.length>1){if(i<bl.length-1){bl[i+1]=b.concat(bl[i+1]);bl.splice(i,1)}else{bl[i-1]=bl[i-1].concat(b);bl.splice(i,1)}}else i++}
+ const out=[];bl.forEach(b=>{const k=b.length,p=Math.ceil(k/mx),base=Math.floor(k/p);let r=k%p,s=0;for(let j=0;j<p;j++){const n=base+(r>0?1:0);if(r>0)r--;out.push(b.slice(s,s+n));s+=n}});return out}
+function rEnv(buf,a,b){const d=buf.getChannelData(0),sr=buf.sampleRate,hop=Math.max(1,Math.round(sr*.01)),i0=Math.max(0,Math.floor(a*sr)),i1=Math.min(d.length,Math.floor(b*sr)),n=Math.max(0,Math.floor((i1-i0)/hop)),e=new Float32Array(n);
+ for(let k=0;k<n;k++){let s=0;const o=i0+k*hop;for(let j=0;j<hop;j++){const v=d[o+j];s+=v*v}e[k]=Math.sqrt(s/hop)}
+ const f=new Float32Array(n);let M=0;for(let k=0;k<n;k++){let s=0,c=0;for(let j=-1;j<=1;j++){const q=k+j;if(q>=0&&q<n){s+=e[q];c++}}f[k]=s/c;if(f[k]>M)M=f[k]}f.M=M;return f}
+function rSnap(e,T,win,lo,hi){const n=e.length;if(!n||!e.M)return cl(T,lo,Math.max(lo,hi));
+ const i0=Math.max(0,Math.ceil(lo*100),Math.round((T-win)*100)),i1=Math.min(n-1,Math.floor(hi*100),Math.round((T+win)*100));if(i1<i0)return cl(T,lo,Math.max(lo,hi));
+ const wi=Math.max(1,win*100);let bi=i0,bs=1e9;for(let i=i0;i<=i1;i++){let m=0,q=0;for(let u=-3;u<=3;u++){const z=i+u;if(z>=0&&z<n){m+=e[z];q++}}const s=m/q/e.M+.25*Math.abs(i-T*100)/wi;if(s<bs){bs=s;bi=i}}return bi/100}
+function rTr(tr,fr){const wd=String(tr||"").trim().split(/\s+/).filter(Boolean),N=wd.length,P=fr.length;
+ if(P<=1)return[wd.join(" ")];if(N<P)return fr.map((_,i)=>wd[i]||"");
+ const cuts=[0];let prev=0;for(let j=0;j<P-1;j++){const idx=Math.round(fr[j]*N);let best=idx,bd=9;
+  for(let d=-3;d<=3;d++){const q=idx+d;if(q<=prev||q>=N)continue;if(/[,;:.!?)”"–—]$/.test(wd[q-1])&&Math.abs(d)<bd){bd=Math.abs(d);best=q}}
+  best=Math.max(prev+1,Math.min(best,N-(P-1-j)));cuts.push(best);prev=best}
+ cuts.push(N);return cuts.slice(1).map((e,i)=>wd.slice(cuts[i],e).join(" "))}
+function reelInfo(c){const own=!!c.own,buf=own?obuf():c.buf;if(!buf||!c.a)return null;
+ const k=[own?"o":"q",S.qari,c.a.gl||0,c.a.num,own?c.start.toFixed(2)+"-"+c.end.toFixed(2):"",S.rfw].join("|");
+ let R=RC.get(k);if(R)return R;if(RC.size>600)RC.clear();
+ const r0=own?c.start:0,r1=own?Math.min(c.end,buf.duration):buf.duration,dur=Math.max(.5,r1-r0),E=rEnv(buf,r0,r1);
+ let sp=0,se=dur;if(E.length>20&&E.M>0){const thr=.06*E.M;let a=0,b=E.length-1;while(a<b&&E[a]<thr)a++;while(b>a&&E[b]<thr)b--;if((b+1-a)*.01>=.3){sp=a*.01;se=(b+1)*.01}}
+ const ph0=rSplit(rWords(c.a.ar),S.rfw),P=ph0.length;
+ const mk={t:"\ufd3f"+AR(c.a.num)+"\ufd3e",w:.7,mk:true};ph0[P-1].push(mk);
+ const pw=ph0.map(p=>p.reduce((s,u)=>s+(u.mk?0:u.w),0)),Wt=pw.reduce((a,b)=>a+b,0)||1,span=Math.max(.3,se-sp);
+ const bnd=[sp];let cum=0;for(let j=0;j<P-1;j++){cum+=pw[j];const T=sp+cum/Wt*span,win=Math.min(.5,.4*pw[j]/Wt*span);bnd.push(rSnap(E,T,win,bnd[j]+.2,se-.2))}bnd.push(se);
+ const nw=ph0.map(p=>p.filter(u=>!u.mk).length),NT=nw.reduce((a,b)=>a+b,0)||1;let cw=0,cn=0;
+ const fr=ph0.map((p,j)=>{cw+=pw[j];cn+=nw[j];return .5*cw/Wt+.5*cn/NT});fr[P-1]=1;
+ const trs=rTr(c.a.id,fr);
+ const ph=ph0.map((p,j)=>{const a0=bnd[j],a1=bnd[j+1],real=p.filter(u=>!u.mk);let cu=0,pv=a0-.08;
+  real.forEach((u,q)=>{let at=a0+cu/pw[j]*(a1-a0);if(q>0){const wd=u.w/pw[j]*(a1-a0);at=rSnap(E,at,Math.min(.12,.3*wd),pv+.08,a1-.08)}u.at=at;pv=at;cu+=u.w});
+  const m0=p.find(u=>u.mk);if(m0)m0.at=Math.max(pv+.1,a1-.15);
+  return{ws:p,t0:a0,t1:a1,tr:trs[j]||""}});
+ R={k,ph,sp,se,lay:null};RC.set(k,R);return R}
+function segR(x){if(x._R&&x._Rk===S.rfw)return x._R;x._Rk=S.rfw;return x._R=reelInfo(x)}
+function reelLead(x){const R=segR(x);return R?R.sp+S.rfo+.05:0}
+function rWrapU(us,font,mw){g.font=font;g.direction="rtl";const sp=g.measureText(" ").width,L=[];let cur=null;
+ us.forEach(u=>{const w=g.measureText(u.t).width;if(cur&&cur.tw+sp+w>mw){L.push(cur);cur=null}if(!cur)cur={it:[],tw:0,sp};else cur.tw+=sp;cur.it.push({u,w});cur.tw+=w});if(cur)L.push(cur);return L}
+function rLay(R,Ld){const key=[W,H,S.fA,S.fT,S.sA,S.sT,fv].join("|");if(R.lay&&R.lay.key===key)return R.lay;
+ const fa='"'+S.fA+'"',ft='"'+S.fT+'"',top0=Ld?170:300,bot=H-(Ld?130:230),mw=W-(Ld?260:110),box=bot-top0;
+ let sz=(Ld?60:80)*S.sA,ts=(Ld?26:30)*S.sT,lh,tl,out;
+ for(let k=0;k<90;k++){lh=sz*1.9;tl=ts*1.5;out=R.ph.map(p=>{const L=rWrapU(p.ws,sz+"px "+fa,mw),T=wrap(p.tr,"500 "+ts+"px "+ft,"ltr",mw);return{L,T,bh:L.length*lh+50+T.length*tl}});
+  if(Math.max.apply(null,out.map(o=>o.bh))<=box||sz<=18)break;sz-=2;ts=Math.max(13,ts-.5)}
+ return R.lay={key,out,sz,ts,lh,tl,fa,ft,top0}}
+function reelDraw(c,t,Ld){const R=c.own?reelInfo(c):segR(c);if(!R)return;
+ const rel=t-c.start-S.rfo;let j=0;R.ph.forEach((p,i)=>{if(rel>=p.t0-.06)j=i});
+ let ap=cl((rel-(R.ph[j].t0-.06))/.25,0,1);if(c.own){if(c.last)ap*=cl((c.end-t)/.3,0,1)}else if(c===segs[segs.length-1])ap*=cl(total-t,0,1);
+ const Y=rLay(R,Ld),o=Y.out[j],top=Math.max(Y.top0,(Ld?H*.53:H*.48)-o.bh/2)+S.yA*H;
+ g.save();g.textBaseline="alphabetic";g.textAlign="right";g.direction="rtl";g.font=Y.sz+"px "+Y.fa;g.fillStyle=S.cA;g.shadowColor="rgba(255,225,160,.4)";g.shadowBlur=26;
+ o.L.forEach((ln,i)=>{let x=W/2+ln.tw/2;const y=top+i*Y.lh+Y.sz;ln.it.forEach(it=>{const aw=S.rfk?cl((rel-(it.u.at-.04))/.18,0,1):1;if(aw>0){g.globalAlpha=ap*aw;g.fillText(it.u.t,x,y)}x-=it.w+ln.sp})});
+ g.shadowBlur=0;g.globalAlpha=ap;const y=top+o.L.length*Y.lh+6;g.fillStyle="rgba(255,210,122,.7)";rr(W/2-36,y,72,4,2);g.fill();
+ g.textAlign="center";g.direction="ltr";g.font="500 "+Y.ts+"px "+Y.ft;g.fillStyle=S.cT;o.T.forEach((l,i)=>g.fillText(l,W/2,y+44+S.yT*H+i*Y.tl));
+ g.restore();g.direction="ltr";g.textAlign="center"}
+mkb("#rfm","chip","Ayat penuh",()=>{S.rf="full";svStyle();rfUI()},{v:"full"});
+mkb("#rfm","chip","Per frasa",()=>{S.rf="frasa";svStyle();rfUI()},{v:"frasa"});
+mkb("#rfk","chip","Kata demi kata",()=>{S.rfk=1;svStyle();rfUI()},{v:"1"});
+mkb("#rfk","chip","Frasa sekaligus",()=>{S.rfk=0;svStyle();rfUI()},{v:"0"});
+function rfUI(){[...$("#rfm").children].forEach(b=>b.classList.toggle("on",b.dataset.v===S.rf));[...$("#rfk").children].forEach(b=>b.classList.toggle("on",+b.dataset.v===S.rfk));
+ $("#rfx").hidden=!reelOn();$("#rfN").textContent=reelOn()?"Ayat tampil sepotong demi sepotong (frasa) mengikuti bacaan, kata demi kata. Terjemahan ikut berganti per frasa.":"Seluruh ayat dan terjemahannya tampil sekaligus."}
+rfUI();
+
 function draw(t){bg(t);const Ld=W>H;if(isTrial()){g.save();g.globalAlpha=.6;g.fillStyle="#fff";g.font="700 "+(Ld?18:22)+"px "+SF;g.textAlign=Ld?"right":"center";g.direction="ltr";g.fillText("Ayat Reels - Trial",Ld?W-28:W/2,Ld?H-20:H-64);g.restore()}g.textAlign="center";g.textBaseline="alphabetic";drawLogo();const s=cur();
 if(s){g.direction="ltr";g.font="700 "+(Ld?20:24)+"px "+SF;const lab=s.englishName,w=g.measureText(lab).width+56,py=Ld?40:96;g.fillStyle="rgba(255,255,255,.12)";rr(W/2-w/2,py,w,Ld?44:52,Ld?22:26);g.fill();g.fillStyle="#fff";g.fillText(lab,W/2,py+(Ld?30:34));
 g.direction="rtl";g.font=(Ld?48:60)+'px "'+S.fA+'"';g.fillStyle="#ffe0a0";g.fillText(s.name,W/2,Ld?128:222)}
-let c=null;if(S.mode==="own"&&ready)c=ownCur(t);else if(ready)segs.forEach(x=>{if(t>=x.start-.2)c=x});else c=DEMO;
+let c=null;if(S.mode==="own"&&ready)c=ownCur(t);else if(ready){const rv=reelOn();segs.forEach(x=>{if(t>=x.start-.2+(rv?reelLead(x):0))c=x})}else c=DEMO;
 if(!c)return;
-let a=c===DEMO?1:c.own?cl((t-c.start)/.3,0,1):cl((t-(c.start-.2))/.6,0,1);if(c.own){if(c.last)a*=cl((c.end-t)/.3,0,1)}else if(c!==DEMO&&c===segs[segs.length-1])a*=cl(total-t,0,1);g.globalAlpha=a;
+const RV=reelOn()&&c!==DEMO&&c.a;if(RV){reelDraw(c,t,Ld)}else{let a=c===DEMO?1:c.own?cl((t-c.start)/.3,0,1):cl((t-(c.start-.2))/.6,0,1);if(c.own){if(c.last)a*=cl((c.end-t)/.3,0,1)}else if(c!==DEMO&&c===segs[segs.length-1])a*=cl(total-t,0,1);g.globalAlpha=a;
 const Y=layout(c,Ld),L=Y.L,T=Y.T,sz=Y.sz,ts=Y.ts,lh=Y.lh,tl=Y.tl,bh=Y.bh,top=Math.max(Y.top0,(Ld?H*.53:H*.48)-bh/2)+S.yA*H;
 g.fillStyle=S.cA;g.font=sz+"px "+Y.fa;g.direction="rtl";g.shadowColor="rgba(255,225,160,.4)";g.shadowBlur=26;L.forEach((l,i)=>g.fillText(l,W/2,top+i*lh+sz));g.shadowBlur=0;
 const y=top+L.length*lh+6;g.fillStyle="rgba(255,210,122,.7)";rr(W/2-36,y,72,4,2);g.fill();
 g.direction="ltr";g.font="500 "+ts+"px "+Y.ft;g.fillStyle=S.cT;T.forEach((l,i)=>g.fillText(l,W/2,y+44+S.yT*H+i*tl));
-const mx=Ld?200:100,by=H-(Ld?48:128);g.globalAlpha=1;g.font="600 "+(Ld?20:22)+"px "+SF;g.fillStyle="rgba(255,255,255,.65)";{const qn=S.mode==="own"?S.oQ:qari()[1];if(qn)g.fillText(qn,W/2,H-(Ld?72:168))}
+}const mx=Ld?200:100,by=H-(Ld?48:128);g.globalAlpha=1;g.font="600 "+(Ld?20:22)+"px "+SF;g.fillStyle="rgba(255,255,255,.65)";{const qn=S.mode==="own"?S.oQ:qari()[1];if(qn)g.fillText(qn,W/2,H-(Ld?72:168))}
 g.fillStyle="rgba(255,255,255,.18)";rr(mx,by,W-2*mx,6,3);g.fill();g.fillStyle="#ffd27a";rr(mx,by,Math.max(6,(W-2*mx)*cl(t/(total||1),0,1)),6,3);g.fill()}
 
 /* ---------- video murotal sendiri ----------
@@ -680,7 +809,7 @@ function setMode(md){
  if(md==="own"&&OWN_PRO_ONLY&&isTrial()){m("Video sendiri hanya untuk paket Pro.",1);openPro();md="qari"}
  if(S.mode!==md){stopP();ready=false;off=0;syncing=false;S.mode=md}
  uiMode();ownRender()}
-function uiMode(){const o=S.mode==="own";$("#pQari").hidden=o;$("#pLatar").hidden=o;$("#pOwn").hidden=!o;$("#sync").hidden=!o;
+function uiMode(){const o=S.mode==="own";$("#pQari").hidden=o;$("#pPick").hidden=o;$("#pLatar").hidden=o;$("#pOwn").hidden=!o;$("#sync").hidden=!o;
  [...$("#src").children].forEach(b=>b.classList.toggle("on",b.dataset.s===S.mode));
  $("#srcN").textContent=o?"Suara dan gambar diambil dari videomu. Aplikasi menambahkan teks Arab dan terjemahan Indonesia sesuai waktu yang kamu tandai.":"Suara qari dan teks diambil otomatis dari internet."}
 mkb("#src","chip","Suara qari bawaan",()=>setMode("qari"),{s:"qari"});
