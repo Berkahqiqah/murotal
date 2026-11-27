@@ -78,21 +78,28 @@ async function markRequests(filter, status) {
 // Dipanggil setelah Pro disetujui. Jika pembeli mendaftar lewat link affiliate (user_metadata.ref),
 // catat komisi AFF_PERCENT% dari harga yang dibayar. buyer_id unik, jadi tidak pernah dobel.
 async function createCommission(uid, promo) {
+  // Mengembalikan teks hasil: "" = bukan pembelian lewat affiliate, selain itu keterangan untuk admin.
   try {
     const r = await fetch(SB_URL + "/auth/v1/admin/users/" + uid, { headers: sh() });
-    if (!r.ok) return;
+    if (!r.ok) return "gagal membaca data pembeli (" + r.status + ")";
     const u = await r.json();
     const ref = String((u.user_metadata || {}).ref || "").toUpperCase();
-    if (!/^[A-Z0-9]{3,20}$/.test(ref)) return;
+    if (!ref) return "";
+    if (!/^[A-Z0-9]{3,20}$/.test(ref)) return "kode referral tidak valid";
     const ar = await rest("affiliates?select=id,user_id,code&status=eq.approved&code=eq." + ref + "&limit=1");
-    const a = ar.ok ? (await ar.json())[0] : null;
-    if (!a || a.user_id === uid) return; // kode tidak valid atau beli lewat kode sendiri
-    const price = promo ? PRICE_PROMO : PRICE_NORMAL;
-    await rest("aff_commissions?on_conflict=buyer_id", {
-      method: "POST", headers: sh({ Prefer: "resolution=ignore-duplicates,return=minimal" }),
-      body: JSON.stringify({ affiliate_id: a.id, code: ref, buyer_id: uid, buyer_email: u.email, price, amount: Math.round(price * AFF_PERCENT / 100) })
+    if (!ar.ok) return "gagal membaca tabel affiliates (" + ar.status + ")";
+    const a = (await ar.json())[0];
+    if (!a) return "kode " + ref + " belum disetujui / tidak ditemukan";
+    if (a.user_id === uid) return "beli lewat kode sendiri, tidak dihitung";
+    const price = promo ? PRICE_PROMO : PRICE_NORMAL, amount = Math.round(price * AFF_PERCENT / 100);
+    const w = await rest("aff_commissions?on_conflict=buyer_id", {
+      method: "POST", headers: sh({ Prefer: "resolution=ignore-duplicates,return=representation" }),
+      body: JSON.stringify({ affiliate_id: a.id, code: ref, buyer_id: uid, buyer_email: u.email, price, amount })
     });
-  } catch (e) {}
+    if (!w.ok) return "gagal menyimpan komisi (" + w.status + "), cek izin tabel aff_commissions";
+    const rows = await w.json();
+    return rows.length ? "komisi Rp" + amount.toLocaleString("id-ID") + " dicatat untuk " + ref : "sudah tercatat";
+  } catch (e) { return "error: " + (e.message || e); }
 }
 
 function makeCode(email) {
@@ -168,8 +175,8 @@ module.exports = async (req, res) => {
       }
       await setPlan(uid, { plan: "pro", pro_until: null, promo: b.promo ? "early" : null });
       await markRequests("user_id=eq." + uid + "&status=eq.pending", "approved");
-      await createCommission(uid, !!b.promo);
-      return out(200, { ok: true });
+      const km = await createCommission(uid, !!b.promo);
+      return out(200, { ok: true, komisi: km });
     }
     if (b.action === "revoke") {
       if (!UUID.test(uid || "")) return out(400, { error: "user_id tidak valid." });
@@ -180,6 +187,16 @@ module.exports = async (req, res) => {
       if (!UUID.test(rid || "")) return out(400, { error: "request_id tidak valid." });
       await markRequests("id=eq." + rid, "rejected");
       return out(200, { ok: true });
+    }
+    if (b.action === "aff_sync") {
+      // Catat komisi untuk semua pembeli Pro yang daftar lewat affiliate tapi komisinya belum tercatat.
+      const users = await listUsers(); let baru = 0; const lewat = [];
+      for (const u of users) {
+        if (planOf(u) !== "pro" || !(u.user_metadata || {}).ref) continue;
+        const m = await createCommission(u.id, (u.app_metadata || {}).promo === "early");
+        if (m.startsWith("komisi")) baru++; else if (m && m !== "sudah tercatat") lewat.push(u.email + ": " + m);
+      }
+      return out(200, { ok: true, komisi: "komisi baru dicatat: " + baru + (lewat.length ? ". Dilewati: " + lewat.join("; ") : "") });
     }
     if (b.action === "aff_overview") return out(200, await affOverview());
     if (b.action === "aff_approve" || b.action === "aff_reject" || b.action === "aff_pay") {
