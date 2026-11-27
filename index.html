@@ -354,6 +354,8 @@ textarea{width:100%;font:inherit;font-weight:600;font-size:13px;color:var(--ink)
 #vApp .col.shut{height:auto}
 .tabs{grid-column:2;grid-row:2;margin:0}
 }
+.affp{position:fixed;left:14px;bottom:14px;z-index:40;border:0;border-radius:999px;padding:10px 16px;font:inherit;font-weight:800;font-size:13px;cursor:pointer;background:linear-gradient(120deg,var(--gold),var(--peach));color:#2a1405;box-shadow:0 6px 22px rgba(0,0,0,.35)}.affp[hidden]{display:none}
+.afl{display:flex;gap:8px;margin:12px 0}.afl input{flex:1;min-width:0}.afrec{display:grid;gap:8px;margin-top:12px}.afrec div{display:flex;justify-content:space-between;gap:10px;font-size:13px;border:1px solid var(--line);border-radius:12px;padding:8px 12px}
 </style></head><body>
 <div class="aura"></div>
 <div id="vLand"><div class="w">
@@ -428,7 +430,7 @@ textarea{width:100%;font:inherit;font-weight:600;font-size:13px;color:var(--ink)
 <div><h1>Panel Admin</h1><p class="sub">Pantau pendaftar, pengajuan Pro, dan viewers.</p></div>
 <div class="usr"><button class="ghost sm" id="adRf" type="button">Muat ulang</button><button class="ghost sm" id="adBack" type="button">Buka aplikasi</button><button class="ghost sm" id="adOut" type="button">Keluar</button></div></header>
 <div class="adst" id="adS"></div>
-<section class="panel"><div class="chips" id="adTabs"><button class="chip on" data-t="req" type="button">Pengajuan Pro</button><button class="chip" data-t="usr" type="button">Pengguna</button></div>
+<section class="panel"><div class="chips" id="adTabs"><button class="chip on" data-t="req" type="button">Pengajuan Pro</button><button class="chip" data-t="usr" type="button">Pengguna</button><button class="chip" data-t="aff" type="button">Affiliate</button><button class="chip" data-t="com" type="button">Komisi</button></div>
 <div class="fld" style="margin:14px 0 0"><input id="adQ" type="search" placeholder="Cari email..." autocomplete="off"></div>
 <label style="display:flex;gap:10px;align-items:center;margin-top:14px;font-size:13.5px;font-weight:600;color:var(--mut)"><input type="checkbox" id="adPromo" style="width:auto;min-height:0;accent-color:var(--gold)"><span id="adPromoT">Tandai sebagai pembeli promo</span></label>
 <div class="adl" id="adList"></div><p class="msg" id="adM" role="status"></p></section>
@@ -446,6 +448,7 @@ textarea{width:100%;font:inherit;font-weight:600;font-size:13px;color:var(--ink)
 <button class="cta" id="mUp" type="button">Upgrade ke Pro</button>
 <a class="mi" id="mGrup" href="#" target="_blank" rel="noopener" hidden>Grup WhatsApp Pro<small>Gabung</small></a>
 <a class="mi" id="mWa" href="#" target="_blank" rel="noopener">Keluhan dan masukan<small>Chat WhatsApp</small></a>
+<button class="mi" id="mAff" type="button">Affiliate<small>Komisi 40%</small></button>
 <button class="mi" id="mAdmin" type="button" hidden>Panel admin<small>Pendaftar, Pro, viewers</small></button>
 <button class="mi" id="out" type="button">Keluar</button>
 </div></div></div></header>
@@ -568,6 +571,11 @@ textarea{width:100%;font:inherit;font-weight:600;font-size:13px;color:var(--ink)
 <p class="ctr"><b id="prLeft"></b></p>
 <button class="cta" id="prGo" type="button">Ambil promo sekarang</button>
 <button class="ghost" id="prLater" type="button">Nanti saja</button></div></div>
+<button class="affp" id="affPill" type="button" hidden>Gabung affiliate &middot; komisi 40%</button>
+<div class="ov" id="vAff" hidden role="dialog" aria-modal="true" aria-labelledby="afT"><div class="mb">
+<button class="ghost pclose" id="afX" type="button" aria-label="Tutup">&times;</button>
+<span class="badge">Affiliate</span><h2 id="afT">Gabung jadi Affiliate</h2>
+<div id="affBody"></div></div></div>
 <div class="ov" id="vPay" hidden role="dialog" aria-modal="true" aria-labelledby="pt"><div class="mb">
 <button class="ghost pclose" id="payX" type="button" aria-label="Tutup">&times;</button>
 <span class="badge">Paket Pro</span><h2 id="pt">Upgrade ke Pro</h2>
@@ -604,6 +612,13 @@ const CONTACT_URL=WA_NUMBER?"https://wa.me/"+WA_NUMBER:"",GROUP_URL="https://cha
 const sb=SUPABASE_URL&&SUPABASE_ANON_KEY&&window.supabase?window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY):null;
 const hashAuth=/access_token=/.test(location.hash),isRecovery=/type=recovery/.test(location.hash),isSignup=/type=signup/.test(location.hash),authErr=(/error_description=([^&]+)/.exec(location.search+location.hash)||[])[1];
 let user=null,tok="",devOK=false,view="",pendErr="";
+/* ---------- affiliate: tangkap kode ?ref= ---------- */
+const REF_KEY="ar-ref",AFF_PCT=40;
+const refCode=()=>{try{return localStorage.getItem(REF_KEY)||""}catch(e){return""}};
+(function(){try{const p=(new URLSearchParams(location.search).get("ref")||"").toUpperCase();if(!/^[A-Z0-9]{3,20}$/.test(p))return;localStorage.setItem(REF_KEY,p);
+const sk="ar-rc:"+p;if(sessionStorage.getItem(sk))return;sessionStorage.setItem(sk,"1");
+if(sb)Promise.resolve(sb.from("aff_clicks").insert({code:p,vid:localStorage.getItem("ar-vid")||""})).then(()=>{},()=>{})}catch(e){}})();
+
 const S={th:0,qari:0,dim:.35,ar:"9:16",mode:"qari",oDim:.3,oFit:"cover",oQ:""},M={el:null,v:false,on:false,url:"",name:""};
 const O={el:null,vbuf:null,abuf:null,url:"",name:"",aname:"",size:0,rows:[],map:new Map()};let OM=[],syncing=false,lastHi=-2;
 let surahs=[],txt={},bufs={},segs=[],total=0,ready=false;const TS={},TE={};
@@ -930,7 +945,7 @@ g.fillStyle=S.cA;g.font=sz+"px "+Y.fa;g.direction="rtl";g.shadowColor="rgba(255,
 const y=top+L.length*lh+6;g.fillStyle="rgba(255,210,122,.7)";rr(W/2-36,y,72,4,2);g.fill();
 g.direction="ltr";g.font="500 "+ts+"px "+Y.ft;g.fillStyle=S.cT;T.forEach((l,i)=>g.fillText(l,W/2,y+44+S.yT*H+i*tl));
 }const mx=Ld?200:100,by=H-(Ld?48:128);g.globalAlpha=1;g.font="600 "+(Ld?20:22)+"px "+SF;g.fillStyle="rgba(255,255,255,.65)";{const qn=S.mode==="own"?S.oQ:qari()[1];if(qn)g.fillText(qn,W/2,H-(Ld?72:168))}
-if(TS[+$("#sur").value]==="qtt.web.id"){g.direction="ltr";g.font="500 "+(Ld?15:18)+"px "+SF;g.fillStyle="rgba(255,255,255,.5)";g.fillText("Tarjamah Tafsiriyah, qtt.web.id",W/2,H-(Ld?98:206))}
+if(TS[+$("#sur").value]==="qtt.web.id"){g.direction="ltr";g.font="500 "+(Ld?15:18)+"px "+SF;g.fillStyle="rgba(255,255,255,.5)";g.fillText("Terjemahan: Tarjamah Tafsiriyah, qtt.web.id",W/2,H-(Ld?98:206))}
 g.fillStyle="rgba(255,255,255,.18)";rr(mx,by,W-2*mx,6,3);g.fill();g.fillStyle="#ffd27a";rr(mx,by,Math.max(6,(W-2*mx)*cl(t/(total||1),0,1)),6,3);g.fill()}
 
 /* ---------- video murotal sendiri ----------
@@ -1124,7 +1139,7 @@ if(v==="admin"&&!isAdmin()){location.hash=ok?"#app":"#masuk";return}
 if(v==="login"&&ok){location.hash="#app";return}
 if(v==="app"&&plan().t==="expired"){const p=plan();$("#xt").textContent=p.why+" sudah berakhir";$("#xp").textContent="Beli paket Pro untuk melanjutkan membuat video tanpa batas.";v="exp"}
 if(view==="app"&&v!=="app"){stopP();off=0}
-view=v;$("#vLand").hidden=v!=="land";$("#vLogin").hidden=v!=="login";$("#vApp").hidden=v!=="app";$("#vExp").hidden=v!=="exp";$("#vReset").hidden=v!=="reset";$("#vAdmin").hidden=v!=="admin";$("#dev").hidden=!!sb;if(v==="admin")adLoad();if(v==="app")setTimeout(grupMaybe,900);
+view=v;$("#vLand").hidden=v!=="land";$("#vLogin").hidden=v!=="login";$("#vApp").hidden=v!=="app";$("#vExp").hidden=v!=="exp";$("#vReset").hidden=v!=="reset";$("#vAdmin").hidden=v!=="admin";$("#affPill").hidden=v!=="app"||!sb;$("#dev").hidden=!!sb;if(v==="admin")adLoad();if(v==="app")setTimeout(grupMaybe,900);
 if(v==="login")mode(h==="#daftar");if(v==="login"&&pendErr){lm(pendErr,1);pendErr=""}
 if(h==="#fitur"||h==="#harga"){$("#vLand").hidden=false;$(h).scrollIntoView();return}
 window.scrollTo(0,0);if(v==="login")setTimeout(()=>$("#em").focus(),50)}
@@ -1175,13 +1190,21 @@ async function adApi(body){let t=tok;try{const r=await sb.auth.getSession();if(r
 const res=await fetch("/api/admin",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+t},body:JSON.stringify(body)});
 let j={};try{j=await res.json()}catch(e){}
 if(!res.ok)throw new Error(j.error||("Server membalas "+res.status));return j}
-let adU=[],adR=[],adT="req";
+let adU=[],adR=[],adA=[],adC=[],adT="req";
 const adF=n=>Number(n||0).toLocaleString("id-ID");
 const adD=s=>s?new Date(s).toLocaleString("id-ID",{day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}):"-";
 function adStats(s){const it=[["Total viewers",s.views],["Viewers unik",s.unique],["Viewers hari ini",s.today],["Total pendaftar",s.users],["Daftar 7 hari terakhir",s.new7],["Pro aktif",s.pro],["Trial aktif",s.trial],["Berakhir",s.expired],["Pengajuan menunggu",s.pending],["Slot promo terpakai",s.promo==null?null:s.promo+" / "+s.quota]];
 $("#adS").innerHTML=it.map(i=>'<div class="st"><span>'+i[0]+'</span><b>'+(i[1]==null?"-":typeof i[1]==="string"?i[1]:adF(i[1]))+'</b></div>').join("")}
+const adRp=n=>"Rp"+adF(n);
+function adAffHtml(q){const rows=adA.filter(a=>!q||(a.email||"").toLowerCase().includes(q)||(a.code||"").toLowerCase().includes(q)).sort((a,b)=>(a.status==="pending"?0:1)-(b.status==="pending"?0:1));
+return rows.map(a=>{const st=a.status,bd=st==="pending"?'<span class="bg">Menunggu</span>':st==="approved"?'<span class="bg ok">Aktif</span>':'<span class="bg no">Ditolak</span>';
+let btn="";if(st==="pending")btn='<div class="bt"><button class="cta" data-a="aff_approve" data-i="'+esc(a.id)+'" data-e="'+esc(a.email)+'" type="button">Setujui</button><button class="ghost" data-a="aff_reject" data-i="'+esc(a.id)+'" data-e="'+esc(a.email)+'" type="button">Tolak</button></div>';
+else if(st==="approved"&&a.unpaid>0)btn='<div class="bt"><button class="cta" data-a="aff_pay" data-i="'+esc(a.id)+'" data-e="'+esc(a.email)+' ('+adRp(a.unpaid)+')" type="button">Tandai dibayar '+adRp(a.unpaid)+'</button></div>';
+return '<div class="adr"><div class="ti"><b>'+esc(a.email)+(a.code?' | '+esc(a.code):'')+'</b><small>WA '+esc(a.wa)+' | '+esc(a.payout)+'</small>'+(st==="approved"?'<small>Klik '+adF(a.clicks)+' | Daftar '+adF(a.signups)+' | Beli '+adF(a.purchases)+' | Komisi '+adRp(a.earned)+' | Belum dibayar '+adRp(a.unpaid)+'</small>':'<small>Diajukan '+adD(a.created_at)+'</small>')+'</div>'+bd+btn+'</div>'}).join("")||'<p class="empty">Belum ada affiliate.</p>'}
+function adComHtml(q){const rows=adC.filter(c=>!q||(c.buyer_email||"").toLowerCase().includes(q)||(c.code||"").toLowerCase().includes(q)||(c.affiliate_email||"").toLowerCase().includes(q));
+return rows.map(c=>'<div class="adr"><div class="ti"><b>'+esc(c.buyer_email)+'</b><small>Lewat kode '+esc(c.code)+' ('+esc(c.affiliate_email)+') | '+adD(c.created_at)+'</small><small>Harga '+adRp(c.price)+' | Komisi '+adRp(c.amount)+'</small></div>'+(c.status==="paid"?'<span class="bg ok">Dibayar</span>':'<span class="bg">Belum dibayar</span>')+'</div>').join("")||'<p class="empty">Belum ada pembelian lewat affiliate.</p>'}
 function adRender(){const q=$("#adQ").value.trim().toLowerCase(),box=$("#adList");let h="";
-if(adT==="req"){const rows=[...adR].filter(r=>!q||(r.email||"").toLowerCase().includes(q)).sort((a,b)=>(a.status==="pending"?0:1)-(b.status==="pending"?0:1));
+if(adT==="aff"){h=adAffHtml(q)}else if(adT==="com"){h=adComHtml(q)}else if(adT==="req"){const rows=[...adR].filter(r=>!q||(r.email||"").toLowerCase().includes(q)).sort((a,b)=>(a.status==="pending"?0:1)-(b.status==="pending"?0:1));
 h=rows.map(r=>{const st=r.status,bd=st==="pending"?'<span class="bg">Menunggu</span>':st==="approved"?'<span class="bg ok">Disetujui</span>':'<span class="bg no">Ditolak</span>';
 const btn=st==="pending"?'<div class="bt"><button class="cta" data-a="approve" data-u="'+esc(r.user_id)+'" data-r="'+esc(r.id)+'" data-e="'+esc(r.email)+'" type="button">Setujui</button><button class="ghost" data-a="reject" data-r="'+esc(r.id)+'" data-e="'+esc(r.email)+'" type="button">Tolak</button></div>':"";
 return '<div class="adr"><div class="ti"><b>'+esc(r.email)+'</b><small>Diajukan '+adD(r.created_at)+'</small></div>'+bd+btn+'</div>'}).join("")||'<p class="empty">Belum ada pengajuan.</p>'}
@@ -1193,15 +1216,42 @@ box.innerHTML=h}
 async function adLoad(){const mm=$("#adM");mm.textContent="Memuat data...";mm.classList.remove("err");
 try{const j=await adApi({action:"overview"});adU=j.users||[];adR=j.requests||[];const s=j.stats||{};adStats(s);{const pc=$("#adPromo"),full=s.promo>=s.quota;pc.checked=!full;pc.disabled=full;$("#adPromoT").textContent=full?"Slot promo habis ("+s.promo+" / "+s.quota+")":"Tandai sebagai pembeli promo Rp 20.000 (sisa "+(s.quota-s.promo)+" slot)"}
 document.querySelector('#adTabs [data-t="req"]').textContent="Pengajuan Pro"+(s.pending?" ("+s.pending+")":"");document.querySelector('#adTabs [data-t="usr"]').textContent="Pengguna ("+adU.length+")";
+try{const j2=await adApi({action:"aff_overview"});adA=j2.affiliates||[];adC=j2.commissions||[]}catch(e){adA=[];adC=[]}
+{const pn=adA.filter(a=>a.status==="pending").length;document.querySelector('#adTabs [data-t="aff"]').textContent="Affiliate"+(pn?" ("+pn+")":"");document.querySelector('#adTabs [data-t="com"]').textContent="Komisi ("+adC.length+")"}
 adRender();mm.textContent=(s.views==null?"Catatan: data viewers belum aktif, jalankan file SQL di Supabase. ":"")+"Diperbarui "+new Date().toLocaleTimeString("id-ID")}
 catch(e){mm.textContent=e.message+(/404/.test(e.message)?" (file api/admin.js belum ter-deploy)":"");mm.classList.add("err")}}
 $("#adTabs").onclick=e=>{const b=e.target.closest("button[data-t]");if(!b)return;adT=b.dataset.t;[...$("#adTabs").children].forEach(x=>x.classList.toggle("on",x===b));adRender()};
 $("#adQ").addEventListener("input",adRender);
 $("#adRf").onclick=adLoad;$("#adBack").onclick=()=>{location.hash="#app"};$("#adOut").onclick=()=>$("#out").click();
 $("#mAdmin").onclick=()=>{closeMenu();location.hash="#admin"};
-$("#adList").onclick=async e=>{const b=e.target.closest("button[data-a]");if(!b)return;const a=b.dataset.a,L={approve:"Setujui Pro untuk ",reject:"Tolak pengajuan dari ",grant:"Jadikan Pro: ",revoke:"Cabut Pro dari "};
+$("#adList").onclick=async e=>{const b=e.target.closest("button[data-a]");if(!b)return;const a=b.dataset.a,L={aff_approve:"Setujui affiliate ",aff_reject:"Tolak affiliate ",aff_pay:"Tandai komisi sudah dibayar ke ",approve:"Setujui Pro untuk ",reject:"Tolak pengajuan dari ",grant:"Jadikan Pro: ",revoke:"Cabut Pro dari "};
 if(!confirm(L[a]+(b.dataset.e||"")+"?"))return;b.disabled=true;
-try{await adApi({action:a,user_id:b.dataset.u,request_id:b.dataset.r,promo:$("#adPromo").checked});toast("Berhasil.");await adLoad()}catch(x){toast(x.message,1);b.disabled=false}};
+try{await adApi({action:a,user_id:b.dataset.u,request_id:b.dataset.r,aff_id:b.dataset.i,promo:$("#adPromo").checked});toast("Berhasil.");await adLoad()}catch(x){toast(x.message,1);b.disabled=false}};
+/* ---------- affiliate (sisi pengguna) ---------- */
+const rpF=n=>"Rp"+Number(n||0).toLocaleString("id-ID");let affD=null;
+async function affLoad(){const b=$("#affBody");if(!sb||!user){b.innerHTML='<p class="hint">Masuk dulu untuk bergabung.</p>';return}
+b.innerHTML='<p class="hint">Memuat...</p>';
+try{const r=await sb.rpc("aff_dashboard");if(r.error)throw r.error;affD=r.data||{};affRender()}catch(e){b.innerHTML='<p class="msg err">Gagal memuat data affiliate. Pastikan file affiliate.sql sudah dijalankan di Supabase.</p>'}}
+function affRender(){const d=affD||{},b=$("#affBody");
+if(!d.status){b.innerHTML='<p class="hint">Ajak teman pakai Ayat Reels, dapat komisi '+AFF_PCT+'% tiap pembelian Pro lewat link-mu.</p><ul><li class="ck">Komisi '+AFF_PCT+'% dari harga yang dibayar pembeli (contoh: Pro Rp49.000 = komisi Rp19.600)</li><li class="ck">Harga promo Rp20.000 = komisi Rp8.000</li><li class="ck">Komisi bisa dicairkan kapan saja lewat WhatsApp admin</li></ul><div class="fld"><label for="afWa">Nomor WhatsApp</label><input id="afWa" type="tel" placeholder="08xxxxxxxxxx"></div><div class="fld"><label for="afPay">Rekening / e-wallet</label><input id="afPay" type="text" placeholder="Contoh: DANA 08xx a.n. Nama"></div><button class="cta" id="afGo" type="button">Ajukan jadi affiliate</button><p class="msg" id="afM" role="status"></p>';$("#afGo").onclick=affApply;return}
+if(d.status==="pending"){b.innerHTML='<p class="hint">Pengajuanmu sedang diperiksa admin. Kode dan link affiliate akan muncul di sini setelah disetujui.</p>';return}
+if(d.status==="rejected"){b.innerHTML='<p class="hint">Pengajuanmu belum bisa disetujui. Hubungi admin lewat WhatsApp untuk info lebih lanjut.</p>';return}
+const link=location.origin+location.pathname+"?ref="+d.code;
+b.innerHTML='<p class="hint">Bagikan link ini. Pembeli Pro yang mendaftar lewat link-mu menghasilkan komisi '+AFF_PCT+'%.</p><div class="afl"><input id="afLink" type="text" readonly value="'+esc(link)+'"><button class="cta" id="afCopy" type="button">Salin</button></div>'
++'<div class="adst"><div class="st"><span>Klik link</span><b>'+Number(d.clicks||0).toLocaleString("id-ID")+'</b></div><div class="st"><span>Pendaftar</span><b>'+Number(d.signups||0).toLocaleString("id-ID")+'</b></div><div class="st"><span>Pembelian</span><b>'+Number(d.purchases||0).toLocaleString("id-ID")+'</b></div><div class="st"><span>Total komisi</span><b>'+rpF(d.earned)+'</b></div><div class="st"><span>Belum dicairkan</span><b>'+rpF(d.unpaid)+'</b></div><div class="st"><span>Sudah dicairkan</span><b>'+rpF(d.paid)+'</b></div></div>'
++(d.unpaid>0?'<a class="cta" id="afCair" target="_blank" rel="noopener" href="https://wa.me/'+WA_NUMBER+'?text='+encodeURIComponent("Halo admin, saya affiliate dengan kode "+d.code+" ingin mencairkan komisi "+rpF(d.unpaid)+". Akun: "+(user?user.email:"-"))+'">Cairkan komisi '+rpF(d.unpaid)+'</a>':'')
++'<h3 style="margin:16px 0 0;font-size:15px">Pembelian lewat link-mu</h3><div class="afrec">'+((d.recent||[]).map(r=>'<div><span>'+esc(r.buyer)+' &middot; '+new Date(r.at).toLocaleDateString("id-ID",{day:"numeric",month:"short"})+'</span><b>'+rpF(r.amount)+(r.status==="paid"?" (dibayar)":"")+'</b></div>').join("")||'<p class="hint">Belum ada pembelian.</p>')+'</div>';
+$("#afCopy").onclick=async()=>{try{await navigator.clipboard.writeText(link)}catch(e){$("#afLink").select();document.execCommand("copy")}toast("Link affiliate disalin.")}}
+async function affApply(){const wa=$("#afWa").value.trim(),py=$("#afPay").value.trim(),mm=$("#afM");
+if(wa.replace(/\D/g,"").length<9){mm.textContent="Isi nomor WhatsApp yang valid.";mm.classList.add("err");return}
+if(py.length<4){mm.textContent="Isi rekening atau e-wallet untuk pencairan komisi.";mm.classList.add("err");return}
+$("#afGo").disabled=true;mm.classList.remove("err");mm.textContent="Mengirim...";
+let error=null;try{const r=await sb.from("affiliates").insert({user_id:user.id,email:user.email,wa,payout:py});error=r.error}catch(e){error=e}
+if(error&&error.code!=="23505"){$("#afGo").disabled=false;mm.textContent="Gagal mengirim pengajuan. Coba lagi.";mm.classList.add("err");return}
+toast("Pengajuan affiliate terkirim.");affLoad()}
+function affOpen(){closeMenu();$("#vAff").hidden=false;affLoad()}
+$("#mAff").onclick=affOpen;$("#affPill").onclick=affOpen;$("#afX").onclick=()=>{$("#vAff").hidden=true};$("#vAff").onclick=e=>{if(e.target===$("#vAff"))$("#vAff").hidden=true};
+document.addEventListener("keydown",e=>{if(e.key==="Escape")$("#vAff").hidden=true});
 /* ---------- grup WhatsApp untuk member Pro ---------- */
 function grupClose(){$("#vGrup").hidden=true}
 function grupMaybe(){if(!GROUP_URL||!user||view!=="app"||plan().t!=="pro")return;const k="ar-grup:"+user.id;
@@ -1248,7 +1298,7 @@ $("#lf").onsubmit=async e=>{e.preventDefault();if(!sb){lm("Login belum dikonfigu
 const em=$("#em").value.trim(),pw=$("#pw").value;if(!em||!pw){lm("Isi email dan kata sandi.",1);return}
 if(up&&pw.length<6){lm("Kata sandi minimal 6 karakter.",1);return}
 $("#lb").disabled=true;lm("Memeriksa...");
-const r=up?await sb.auth.signUp({email:em,password:pw,options:{emailRedirectTo:location.origin+location.pathname}}):await sb.auth.signInWithPassword({email:em,password:pw});$("#lb").disabled=false;
+const r=up?await sb.auth.signUp({email:em,password:pw,options:{emailRedirectTo:location.origin+location.pathname,data:refCode()?{ref:refCode()}:{}}}):await sb.auth.signInWithPassword({email:em,password:pw});$("#lb").disabled=false;
 const{data,error}=r;
 if(error&&!up&&/confirm/i.test(error.message||"")){mlOpen(em,true);lm("");return}
 if(error){lm(/invalid|credentials/i.test(error.message)?"Email atau kata sandi salah.":/confirm/i.test(error.message)?"Email belum dikonfirmasi. Cek kotak masukmu.":/registered|exists/i.test(error.message)?"Email ini sudah terdaftar. Silakan masuk.":"Gagal: "+error.message,1);return}
