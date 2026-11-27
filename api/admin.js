@@ -90,7 +90,6 @@ async function createCommission(uid, promo) {
     if (!ar.ok) return "gagal membaca tabel affiliates (" + ar.status + ")";
     const a = (await ar.json())[0];
     if (!a) return "kode " + ref + " belum disetujui / tidak ditemukan";
-    if (a.user_id === uid) return "beli lewat kode sendiri, tidak dihitung";
     const price = promo ? PRICE_PROMO : PRICE_NORMAL, amount = Math.round(price * AFF_PERCENT / 100);
     const w = await rest("aff_commissions?on_conflict=buyer_id", {
       method: "POST", headers: sh({ Prefer: "resolution=ignore-duplicates,return=representation" }),
