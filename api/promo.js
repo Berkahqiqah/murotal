@@ -1,7 +1,7 @@
 // api/promo.js - Vercel Serverless Function (publik, hanya mengembalikan jumlah slot promo)
 const SB_URL = (process.env.SUPABASE_URL || "https://amktgzdvkuiachxwrcsi.supabase.co").replace(/\/$/, "");
 const SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
-const QUOTA = Number(process.env.PROMO_QUOTA || 10);
+const QUOTA = Number(process.env.PROMO_QUOTA || 25);
 
 module.exports = async (req, res) => {
   try {
@@ -13,7 +13,7 @@ module.exports = async (req, res) => {
       const r = await fetch(SB_URL + "/auth/v1/admin/users?page=" + p + "&per_page=1000", { headers: h });
       if (!r.ok) throw new Error("gagal");
       const rows = (await r.json()).users || [];
-      sold += rows.filter(u => (u.app_metadata || {}).plan === "pro" && (u.app_metadata || {}).promo === "early").length;
+      sold += rows.filter(u => (u.app_metadata || {}).plan === "pro" && (u.app_metadata || {}).promo === "early2").length;
       if (rows.length < 1000) break;
     }
     res.setHeader("Cache-Control", "s-maxage=20, stale-while-revalidate=60");
