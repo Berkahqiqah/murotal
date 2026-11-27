@@ -5,9 +5,10 @@ const ANON = process.env.SUPABASE_ANON_KEY || "sb_publishable_dzsT6aE7JIY3-C9nR7
 const SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
 const ADMIN = (process.env.ADMIN_EMAIL || "aditya.rizal.752@gmail.com").toLowerCase();
 const TRIAL_DAYS = Number(process.env.TRIAL_DAYS || 2);
-const QUOTA = Number(process.env.PROMO_QUOTA || 10);
+const QUOTA = Number(process.env.PROMO_QUOTA || 25);
 const PRICE_NORMAL = Number(process.env.PRICE_NORMAL || 49000);
-const PRICE_PROMO = Number(process.env.PRICE_PROMO || 20000);
+const PRICE_PROMO = Number(process.env.PRICE_PROMO || 25000);
+const PRICE_PROMO_OLD = 20000; // promo gelombang pertama (promo: "early")
 const AFF_PERCENT = Number(process.env.AFF_PERCENT || 40);
 const DAY = 864e5;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -77,7 +78,7 @@ async function markRequests(filter, status) {
 // ---------- AFFILIATE ----------
 // Dipanggil setelah Pro disetujui. Jika pembeli mendaftar lewat link affiliate (user_metadata.ref),
 // catat komisi AFF_PERCENT% dari harga yang dibayar. buyer_id unik, jadi tidak pernah dobel.
-async function createCommission(uid, promo) {
+async function createCommission(uid, priceArg) {
   // Mengembalikan teks hasil: "" = bukan pembelian lewat affiliate, selain itu keterangan untuk admin.
   try {
     const r = await fetch(SB_URL + "/auth/v1/admin/users/" + uid, { headers: sh() });
@@ -90,7 +91,7 @@ async function createCommission(uid, promo) {
     if (!ar.ok) return "gagal membaca tabel affiliates (" + ar.status + ")";
     const a = (await ar.json())[0];
     if (!a) return "kode " + ref + " belum disetujui / tidak ditemukan";
-    const price = promo ? PRICE_PROMO : PRICE_NORMAL, amount = Math.round(price * AFF_PERCENT / 100);
+    const price = priceArg || PRICE_NORMAL, amount = Math.round(price * AFF_PERCENT / 100);
     const w = await rest("aff_commissions?on_conflict=buyer_id", {
       method: "POST", headers: sh({ Prefer: "resolution=ignore-duplicates,return=representation" }),
       body: JSON.stringify({ affiliate_id: a.id, code: ref, buyer_id: uid, buyer_email: u.email, price, amount })
@@ -153,7 +154,7 @@ module.exports = async (req, res) => {
       try { const v = await rest("rpc/visit_stats", { method: "POST", body: "{}" }); if (v.ok) vs = await v.json(); } catch (e) {}
       const rows = users.map(u => ({
         id: u.id, email: u.email, created_at: u.created_at, last_sign_in_at: u.last_sign_in_at, plan: planOf(u),
-        promo: (u.app_metadata || {}).promo === "early" && planOf(u) === "pro"
+        promo: (u.app_metadata || {}).promo === "early2" && planOf(u) === "pro"
       })).sort((a, c) => new Date(c.created_at) - new Date(a.created_at));
       const cnt = k => rows.filter(u => u.plan === k).length;
       const stats = {
@@ -169,12 +170,12 @@ module.exports = async (req, res) => {
     if (b.action === "approve" || b.action === "grant") {
       if (!UUID.test(uid || "")) return out(400, { error: "user_id tidak valid." });
       if (b.promo) {
-        const sold = (await listUsers()).filter(u => (u.app_metadata || {}).promo === "early" && planOf(u) === "pro").length;
+        const sold = (await listUsers()).filter(u => (u.app_metadata || {}).promo === "early2" && planOf(u) === "pro").length;
         if (sold >= QUOTA) return out(409, { error: "Slot promo sudah habis. Hilangkan centang promo lalu coba lagi." });
       }
-      await setPlan(uid, { plan: "pro", pro_until: null, promo: b.promo ? "early" : null });
+      await setPlan(uid, { plan: "pro", pro_until: null, promo: b.promo ? "early2" : null });
       await markRequests("user_id=eq." + uid + "&status=eq.pending", "approved");
-      const km = await createCommission(uid, !!b.promo);
+      const km = await createCommission(uid, b.promo ? PRICE_PROMO : PRICE_NORMAL);
       return out(200, { ok: true, komisi: km });
     }
     if (b.action === "revoke") {
@@ -192,7 +193,8 @@ module.exports = async (req, res) => {
       const users = await listUsers(); let baru = 0; const lewat = [];
       for (const u of users) {
         if (planOf(u) !== "pro" || !(u.user_metadata || {}).ref) continue;
-        const m = await createCommission(u.id, (u.app_metadata || {}).promo === "early");
+        const pm = (u.app_metadata || {}).promo;
+        const m = await createCommission(u.id, pm === "early2" ? PRICE_PROMO : pm === "early" ? PRICE_PROMO_OLD : PRICE_NORMAL);
         if (m.startsWith("komisi")) baru++; else if (m && m !== "sudah tercatat") lewat.push(u.email + ": " + m);
       }
       return out(200, { ok: true, komisi: "komisi baru dicatat: " + baru + (lewat.length ? ". Dilewati: " + lewat.join("; ") : "") });
