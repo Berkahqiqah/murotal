@@ -1217,7 +1217,7 @@ const btn=pl==="pro"?'<button class="ghost" data-a="revoke" data-u="'+esc(u.id)+
 return '<div class="adr"><div class="ti"><b>'+esc(u.email)+'</b><small>Daftar '+adD(u.created_at)+' | login terakhir '+adD(u.last_sign_in_at)+'</small></div>'+bd+'<div class="bt">'+btn+'</div></div>'}).join("")||'<p class="empty">Tidak ada pengguna.</p>'}
 box.innerHTML=h}
 async function adLoad(){const mm=$("#adM");mm.textContent="Memuat data...";mm.classList.remove("err");
-try{const j=await adApi({action:"overview"});adU=j.users||[];adR=j.requests||[];const s=j.stats||{};adStats(s);{const pc=$("#adPromo"),full=s.promo>=s.quota;pc.checked=!full;pc.disabled=full;$("#adPromoT").textContent=full?"Slot promo habis ("+s.promo+" / "+s.quota+")":"Tandai sebagai pembeli promo Rp 20.000 (sisa "+(s.quota-s.promo)+" slot)"}
+try{const j=await adApi({action:"overview"});adU=j.users||[];adR=j.requests||[];const s=j.stats||{};adStats(s);{const pc=$("#adPromo"),full=s.promo>=s.quota;pc.checked=!full;pc.disabled=full;$("#adPromoT").textContent=full?"Slot promo habis ("+s.promo+" / "+s.quota+")":"Tandai sebagai pembeli promo Rp 25.000 (sisa "+(s.quota-s.promo)+" slot)"}
 document.querySelector('#adTabs [data-t="req"]').textContent="Pengajuan Pro"+(s.pending?" ("+s.pending+")":"");document.querySelector('#adTabs [data-t="usr"]').textContent="Pengguna ("+adU.length+")";
 try{const j2=await adApi({action:"aff_overview"});adA=j2.affiliates||[];adC=j2.commissions||[]}catch(e){adA=[];adC=[]}
 {const pn=adA.filter(a=>a.status==="pending").length;document.querySelector('#adTabs [data-t="aff"]').textContent="Affiliate"+(pn?" ("+pn+")":"");document.querySelector('#adTabs [data-t="com"]').textContent="Komisi ("+adC.length+")"}
@@ -1236,7 +1236,7 @@ async function affLoad(){const b=$("#affBody");if(!sb||!user){b.innerHTML='<p cl
 b.innerHTML='<p class="hint">Memuat...</p>';
 try{const r=await sb.rpc("aff_dashboard");if(r.error)throw r.error;affD=r.data||{};affRender()}catch(e){b.innerHTML='<p class="msg err">Gagal memuat data affiliate. Pastikan file affiliate.sql sudah dijalankan di Supabase.</p>'}}
 function affRender(){const d=affD||{},b=$("#affBody");
-if(!d.status){b.innerHTML='<p class="hint">Ajak teman pakai Ayat Reels, dapat komisi '+AFF_PCT+'% tiap pembelian Pro lewat link-mu.</p><ul><li class="ck">Komisi '+AFF_PCT+'% dari harga yang dibayar pembeli (contoh: Pro Rp49.000 = komisi Rp19.600)</li><li class="ck">Harga promo Rp20.000 = komisi Rp8.000</li><li class="ck">Komisi bisa dicairkan kapan saja lewat WhatsApp admin</li></ul><div class="fld"><label for="afWa">Nomor WhatsApp</label><input id="afWa" type="tel" placeholder="08xxxxxxxxxx"></div><div class="fld"><label for="afPay">Rekening / e-wallet</label><input id="afPay" type="text" placeholder="Contoh: DANA 08xx a.n. Nama"></div><button class="cta" id="afGo" type="button">Ajukan jadi affiliate</button><p class="msg" id="afM" role="status"></p>';$("#afGo").onclick=affApply;return}
+if(!d.status){b.innerHTML='<p class="hint">Ajak teman pakai Ayat Reels, dapat komisi '+AFF_PCT+'% tiap pembelian Pro lewat link-mu.</p><ul><li class="ck">Komisi '+AFF_PCT+'% dari harga yang dibayar pembeli (contoh: Pro Rp49.000 = komisi Rp19.600)</li><li class="ck">Harga promo Rp25.000 = komisi Rp10.000</li><li class="ck">Komisi bisa dicairkan kapan saja lewat WhatsApp admin</li></ul><div class="fld"><label for="afWa">Nomor WhatsApp</label><input id="afWa" type="tel" placeholder="08xxxxxxxxxx"></div><div class="fld"><label for="afPay">Rekening / e-wallet</label><input id="afPay" type="text" placeholder="Contoh: DANA 08xx a.n. Nama"></div><button class="cta" id="afGo" type="button">Ajukan jadi affiliate</button><p class="msg" id="afM" role="status"></p>';$("#afGo").onclick=affApply;return}
 if(d.status==="pending"){b.innerHTML='<p class="hint">Pengajuanmu sedang diperiksa admin. Kode dan link affiliate akan muncul di sini setelah disetujui.</p>';return}
 if(d.status==="rejected"){b.innerHTML='<p class="hint">Pengajuanmu belum bisa disetujui. Hubungi admin lewat WhatsApp untuk info lebih lanjut.</p>';return}
 const link=location.origin+location.pathname+"?ref="+d.code;
@@ -1264,7 +1264,7 @@ $("#gX").onclick=$("#gLater").onclick=grupClose;$("#gGo").onclick=()=>{setTimeou
 $("#vGrup").onclick=e=>{if(e.target===$("#vGrup"))grupClose()};
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#vGrup").hidden)grupClose()});
 /* ---------- promo pembeli pertama ---------- */
-const PROMO={on:false,left:0,quota:0,price:"Rp 20.000 / sekali bayar",base:PRICE_BASE.split(" /")[0]};
+const PROMO={on:false,left:0,quota:0,price:"Rp 25.000 / sekali bayar",base:PRICE_BASE.split(" /")[0]};
 function applyPrice(){const pe=$("#price");pe.innerHTML=PROMO.on?'<s style="font-size:16px;color:var(--mut);font-weight:600">'+PROMO.base+'</s> '+PRICE_TEXT:PRICE_TEXT;
 const pn=$("#priceNote");pn.hidden=!PROMO.on;if(PROMO.on)pn.textContent="Promo "+PROMO.quota+" pembeli pertama. Sisa "+PROMO.left+" slot.";
 $("#xc").textContent="Beli Pro, "+PRICE_TEXT.split(" /")[0];
