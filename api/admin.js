@@ -6,6 +6,9 @@ const SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
 const ADMIN = (process.env.ADMIN_EMAIL || "aditya.rizal.752@gmail.com").toLowerCase();
 const TRIAL_DAYS = Number(process.env.TRIAL_DAYS || 2);
 const QUOTA = Number(process.env.PROMO_QUOTA || 10);
+const PRICE_NORMAL = Number(process.env.PRICE_NORMAL || 49000);
+const PRICE_PROMO = Number(process.env.PRICE_PROMO || 20000);
+const AFF_PERCENT = Number(process.env.AFF_PERCENT || 40);
 const DAY = 864e5;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -70,6 +73,62 @@ async function markRequests(filter, status) {
   if (!r.ok) throw new Error("Gagal memperbarui pengajuan (" + r.status + ").");
 }
 
+
+// ---------- AFFILIATE ----------
+// Dipanggil setelah Pro disetujui. Jika pembeli mendaftar lewat link affiliate (user_metadata.ref),
+// catat komisi AFF_PERCENT% dari harga yang dibayar. buyer_id unik, jadi tidak pernah dobel.
+async function createCommission(uid, promo) {
+  try {
+    const r = await fetch(SB_URL + "/auth/v1/admin/users/" + uid, { headers: sh() });
+    if (!r.ok) return;
+    const u = await r.json();
+    const ref = String((u.user_metadata || {}).ref || "").toUpperCase();
+    if (!/^[A-Z0-9]{3,20}$/.test(ref)) return;
+    const ar = await rest("affiliates?select=id,user_id,code&status=eq.approved&code=eq." + ref + "&limit=1");
+    const a = ar.ok ? (await ar.json())[0] : null;
+    if (!a || a.user_id === uid) return; // kode tidak valid atau beli lewat kode sendiri
+    const price = promo ? PRICE_PROMO : PRICE_NORMAL;
+    await rest("aff_commissions?on_conflict=buyer_id", {
+      method: "POST", headers: sh({ Prefer: "resolution=ignore-duplicates,return=minimal" }),
+      body: JSON.stringify({ affiliate_id: a.id, code: ref, buyer_id: uid, buyer_email: u.email, price, amount: Math.round(price * AFF_PERCENT / 100) })
+    });
+  } catch (e) {}
+}
+
+function makeCode(email) {
+  let base = String(email || "").split("@")[0].replace(/[^a-z0-9]/gi, "").toUpperCase().slice(0, 6);
+  if (base.length < 3) base = "AYAT";
+  return base + String(Math.floor(Math.random() * 90) + 10);
+}
+
+async function affOverview() {
+  const [users, af, cm, ck] = await Promise.all([
+    listUsers(),
+    rest("affiliates?select=*&order=created_at.desc&limit=500"),
+    rest("aff_commissions?select=*&order=created_at.desc&limit=2000"),
+    rest("aff_clicks?select=code&limit=100000")
+  ]);
+  const affs = af.ok ? await af.json() : [];
+  const coms = cm.ok ? await cm.json() : [];
+  const clicks = ck.ok ? await ck.json() : [];
+  const count = (arr, f) => arr.reduce((m, x) => { const k = f(x); if (k) m[k] = (m[k] || 0) + 1; return m; }, {});
+  const clickBy = count(clicks, x => x.code);
+  const signBy = count(users, u => String((u.user_metadata || {}).ref || "").toUpperCase());
+  const emailOf = {};
+  affs.forEach(a => { emailOf[a.id] = a.email; });
+  const affiliates = affs.map(a => {
+    const mine = coms.filter(c => c.affiliate_id === a.id);
+    const sum = f => mine.filter(f).reduce((t, c) => t + c.amount, 0);
+    return {
+      id: a.id, email: a.email, wa: a.wa, payout: a.payout, code: a.code, status: a.status, created_at: a.created_at,
+      clicks: a.code ? (clickBy[a.code] || 0) : 0, signups: a.code ? (signBy[a.code] || 0) : 0,
+      purchases: mine.length, earned: sum(() => true), unpaid: sum(c => c.status === "unpaid"), paid: sum(c => c.status === "paid")
+    };
+  });
+  const commissions = coms.map(c => Object.assign({}, c, { affiliate_email: emailOf[c.affiliate_id] || "-" }));
+  return { affiliates, commissions };
+}
+
 module.exports = async (req, res) => {
   const out = (code, obj) => res.status(code).json(obj);
   try {
@@ -109,6 +168,7 @@ module.exports = async (req, res) => {
       }
       await setPlan(uid, { plan: "pro", pro_until: null, promo: b.promo ? "early" : null });
       await markRequests("user_id=eq." + uid + "&status=eq.pending", "approved");
+      await createCommission(uid, !!b.promo);
       return out(200, { ok: true });
     }
     if (b.action === "revoke") {
@@ -120,6 +180,36 @@ module.exports = async (req, res) => {
       if (!UUID.test(rid || "")) return out(400, { error: "request_id tidak valid." });
       await markRequests("id=eq." + rid, "rejected");
       return out(200, { ok: true });
+    }
+    if (b.action === "aff_overview") return out(200, await affOverview());
+    if (b.action === "aff_approve" || b.action === "aff_reject" || b.action === "aff_pay") {
+      const aid = b.aff_id;
+      if (!UUID.test(aid || "")) return out(400, { error: "affiliate id tidak valid." });
+      if (b.action === "aff_pay") {
+        const r = await rest("aff_commissions?affiliate_id=eq." + aid + "&status=eq.unpaid", {
+          method: "PATCH", headers: sh({ Prefer: "return=minimal" }),
+          body: JSON.stringify({ status: "paid", paid_at: new Date().toISOString() })
+        });
+        if (!r.ok) throw new Error("Gagal menandai komisi dibayar (" + r.status + ").");
+        return out(200, { ok: true });
+      }
+      const gr = await rest("affiliates?select=id,email,code&id=eq." + aid + "&limit=1");
+      const row = gr.ok ? (await gr.json())[0] : null;
+      if (!row) return out(404, { error: "Affiliate tidak ditemukan." });
+      if (b.action === "aff_reject") {
+        await rest("affiliates?id=eq." + aid, { method: "PATCH", headers: sh({ Prefer: "return=minimal" }), body: JSON.stringify({ status: "rejected", handled_at: new Date().toISOString() }) });
+        return out(200, { ok: true });
+      }
+      for (let i = 0; i < 8; i++) {
+        const code = row.code || makeCode(row.email);
+        const r = await rest("affiliates?id=eq." + aid, {
+          method: "PATCH", headers: sh({ Prefer: "return=minimal" }),
+          body: JSON.stringify({ status: "approved", code, handled_at: new Date().toISOString() })
+        });
+        if (r.ok) return out(200, { ok: true, code });
+        if (r.status !== 409 || row.code) throw new Error("Gagal menyetujui affiliate (" + r.status + ").");
+      }
+      throw new Error("Gagal membuat kode unik, coba lagi.");
     }
     return out(400, { error: "Aksi tidak dikenal." });
   } catch (e) {
