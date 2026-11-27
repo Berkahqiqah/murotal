@@ -355,7 +355,7 @@ textarea{width:100%;font:inherit;font-weight:600;font-size:13px;color:var(--ink)
 .tabs{grid-column:2;grid-row:2;margin:0}
 }
 .affp{position:fixed;left:14px;bottom:14px;z-index:40;border:0;border-radius:999px;padding:10px 16px;font:inherit;font-weight:800;font-size:13px;cursor:pointer;background:linear-gradient(120deg,var(--gold),var(--peach));color:#2a1405;box-shadow:0 6px 22px rgba(0,0,0,.35)}.affp[hidden]{display:none}
-.afl{display:flex;gap:8px;margin:12px 0}.afl input{flex:1;min-width:0}.afrec{display:grid;gap:8px;margin-top:12px}.afrec div{display:flex;justify-content:space-between;gap:10px;font-size:13px;border:1px solid var(--line);border-radius:12px;padding:8px 12px}
+.afl{display:flex;gap:8px;margin:12px 0}.afl input{flex:1 1 0;width:100%;min-width:0}.afl .cta{flex:0 0 auto;width:auto;padding-left:22px;padding-right:22px}.afrec{display:grid;gap:8px;margin-top:12px}.afrec div{display:flex;justify-content:space-between;gap:10px;font-size:13px;border:1px solid var(--line);border-radius:12px;padding:8px 12px}
 </style></head><body>
 <div class="aura"></div>
 <div id="vLand"><div class="w">
@@ -1132,7 +1132,10 @@ document.querySelectorAll(".tvid").forEach(e=>e.textContent=FREE_EXPORTS_PER_DAY
 let up=false;
 function mode(u){up=u;$("#tabIn").classList.toggle("on",!u);$("#tabUp").classList.toggle("on",u);$("#lt").textContent=u?"Coba gratis":"Masuk";$("#lb").textContent=u?"Buat akun trial":"Masuk";$("#lh").textContent=u?"Gratis"+(TRIAL_DAYS>0?" "+TRIAL_DAYS+" hari":"")+": "+(TRIAL_MAX_AYAT>0?"maksimal "+TRIAL_MAX_AYAT+" ayat per video, ":"ayat tanpa batas, ")+(FREE_EXPORTS_PER_DAY>0?FREE_EXPORTS_PER_DAY+" video per hari":"video tanpa batas")+", ada watermark.":"Masuk dengan email dan kata sandi akunmu.";$("#pw").setAttribute("autocomplete",u?"new-password":"current-password");$("#fgw").hidden=u;lm("")}
 $("#tabIn").onclick=()=>mode(false);$("#tabUp").onclick=()=>mode(true);
-function route(){closeMenu();const h=location.hash,ok=!!user||devOK;let v=h==="#app"?"app":h==="#reset"?"reset":h==="#admin"?"admin":(h==="#masuk"||h==="#daftar")?"login":"land";
+let refBusy=false;
+function ensureRef(){const c=refCode();if(!sb||!user||!c||refBusy||(user.user_metadata||{}).ref)return;refBusy=true;
+sb.auth.updateUser({data:{ref:c}}).then(r=>{if(r&&r.data&&r.data.user)user=r.data.user;refBusy=false},()=>{refBusy=false})}
+function route(){closeMenu();ensureRef();const h=location.hash,ok=!!user||devOK;let v=h==="#app"?"app":h==="#reset"?"reset":h==="#admin"?"admin":(h==="#masuk"||h==="#daftar")?"login":"land";
 if(v==="app"&&!ok){location.hash="#masuk";return}
 if(v==="reset"&&!user){location.hash="#masuk";return}
 if(v==="admin"&&!isAdmin()){location.hash=ok?"#app":"#masuk";return}
@@ -1200,7 +1203,7 @@ function adAffHtml(q){const rows=adA.filter(a=>!q||(a.email||"").toLowerCase().i
 return rows.map(a=>{const st=a.status,bd=st==="pending"?'<span class="bg">Menunggu</span>':st==="approved"?'<span class="bg ok">Aktif</span>':'<span class="bg no">Ditolak</span>';
 let btn="";if(st==="pending")btn='<div class="bt"><button class="cta" data-a="aff_approve" data-i="'+esc(a.id)+'" data-e="'+esc(a.email)+'" type="button">Setujui</button><button class="ghost" data-a="aff_reject" data-i="'+esc(a.id)+'" data-e="'+esc(a.email)+'" type="button">Tolak</button></div>';
 else if(st==="approved"&&a.unpaid>0)btn='<div class="bt"><button class="cta" data-a="aff_pay" data-i="'+esc(a.id)+'" data-e="'+esc(a.email)+' ('+adRp(a.unpaid)+')" type="button">Tandai dibayar '+adRp(a.unpaid)+'</button></div>';
-return '<div class="adr"><div class="ti"><b>'+esc(a.email)+(a.code?' | '+esc(a.code):'')+'</b><small>WA '+esc(a.wa)+' | '+esc(a.payout)+'</small>'+(st==="approved"?'<small>Klik '+adF(a.clicks)+' | Daftar '+adF(a.signups)+' | Beli '+adF(a.purchases)+' | Komisi '+adRp(a.earned)+' | Belum dibayar '+adRp(a.unpaid)+'</small>':'<small>Diajukan '+adD(a.created_at)+'</small>')+'</div>'+bd+btn+'</div>'}).join("")||'<p class="empty">Belum ada affiliate.</p>'}
+return '<div class="adr"><div class="ti"><b>'+esc(a.email)+(a.code?' | '+esc(a.code):'')+'</b><small style="display:block">WA '+esc(a.wa)+' | '+esc(a.payout)+'</small>'+(st==="approved"?'<small style="display:block">Klik '+adF(a.clicks)+' | Daftar '+adF(a.signups)+' | Beli '+adF(a.purchases)+' | Komisi '+adRp(a.earned)+' | Belum dibayar '+adRp(a.unpaid)+'</small>':'<small>Diajukan '+adD(a.created_at)+'</small>')+'</div>'+bd+btn+'</div>'}).join("")||'<p class="empty">Belum ada affiliate.</p>'}
 function adComHtml(q){const rows=adC.filter(c=>!q||(c.buyer_email||"").toLowerCase().includes(q)||(c.code||"").toLowerCase().includes(q)||(c.affiliate_email||"").toLowerCase().includes(q));
 return '<div class="adr"><div class="ti"><b>Hitung ulang komisi</b><small>Cek semua pembeli Pro yang daftar lewat affiliate, lalu catat komisi yang belum tercatat.</small></div><div class="bt"><button class="ghost" data-a="aff_sync" data-e="" type="button">Sinkron komisi</button></div></div>'+(rows.map(c=>'<div class="adr"><div class="ti"><b>'+esc(c.buyer_email)+'</b><small>Lewat kode '+esc(c.code)+' ('+esc(c.affiliate_email)+') | '+adD(c.created_at)+'</small><small>Harga '+adRp(c.price)+' | Komisi '+adRp(c.amount)+'</small></div>'+(c.status==="paid"?'<span class="bg ok">Dibayar</span>':'<span class="bg">Belum dibayar</span>')+'</div>').join("")||'<p class="empty">Belum ada pembelian lewat affiliate.</p>')}
 function adRender(){const q=$("#adQ").value.trim().toLowerCase(),box=$("#adList");let h="";
